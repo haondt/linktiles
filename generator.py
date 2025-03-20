@@ -40,8 +40,22 @@ def generate_site():
     shutil.copytree(STATIC_DIR, os.path.join(OUTPUT_DIR, 'static'))
     print('site generated!\n\n')
 
+class CustomHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
+    def do_GET(self):
+        file_path = self.translate_path(self.path)
+        
+        # If path doesn't exist and doesn't end with .html, try with .html extension
+        if not os.path.exists(file_path) and not self.path.endswith('.html'):
+            html_path = file_path + '.html'
+            if os.path.exists(html_path):
+                # Modify the path to include .html
+                self.path = self.path + '.html'
+        
+        # Proceed with normal handling
+        return http.server.SimpleHTTPRequestHandler.do_GET(self)
+
 def serve_site(port=8000):
-    handler = http.server.SimpleHTTPRequestHandler
+    handler = CustomHTTPRequestHandler
 
     # Set the directory to serve (output directory)
     os.chdir(OUTPUT_DIR)
