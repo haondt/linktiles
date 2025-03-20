@@ -4,24 +4,7 @@
 <section class="section">
     <div class="container">
         {% include "unauthenticated.html" %}
-
     </div>
 </section>
 
-<section class="section">
-    <div class="container">
-        <img src="/static/images/logo.svg"/>
-        <div class="field">
-            <label class="label">Linkding API Token 34</label>
-            <div class="control">
-                <input class="input" type="text" id="api-token" placeholder="Enter your API token">
-            </div>
-            <p class="help">Press Enter to save and load links.</p>
-        </div>
-        <div class="buttons">
-            <button class="button is-primary" id="add-tile-btn">Add Tile</button>
-        </div>
-        <div class="columns is-multiline is-mobile" id="tile-grid"></div>
-    </div>
-</section>
 {% endblock %}

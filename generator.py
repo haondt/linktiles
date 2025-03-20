@@ -84,7 +84,7 @@ def start_server_with_watch():
     generate_site()
 
     print('starting watcher...')
-    watch_thread = threading.Thread(target=watch.watch, args=([CONTENT_DIR], 0.1, lambda _: restart_server()))
+    watch_thread = threading.Thread(target=watch.watch, args=([CONTENT_DIR, TEMPLATES_DIR, STATIC_DIR], 0.1, lambda _: restart_server()))
     watch_thread.daemon = True
     watch_thread.start()
     print('watcher started!\n\n')

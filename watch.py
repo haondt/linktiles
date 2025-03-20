@@ -20,7 +20,7 @@ class Handler(FileSystemEventHandler):
         self.timer.start()
 
     def _debounced_callback(self, event_type: str) -> None:
-        del self.timer
+        self.timer = None
         self.callback(event_type)
 
 def watch(paths: list[str], settle: float, callback: Callable[[str], None]):
