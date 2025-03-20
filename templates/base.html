@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>linktiles</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css">
+    <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+    <script src="https://unpkg.com/hyperscript.org@0.9.14"></script>
+    <link rel="icon" href="/static/images/logo.svg" type="image/svg+xml" />
+</head>
+<body>
+    <style>
+        :root {
+          --bulma-primary-h: 1deg;
+          --bulma-primary-s: 52%;
+          --bulma-primary-l: 69%;
+        }
+    </style>
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <p class="navbar-item">
+                <img src="{{ SITEURL }}/static/images/logo.svg"/>
+                <div class="is-flex is-flex-direction-column is-justify-content-center">
+
+                <p class=" is-size-6 is-uppercase has-text-weight-medium has-text-primary">linktiles</p>
+                </div>
+            </p>
+        </div>
+    </nav>
+    <div id="content">
+    {% block content %}{% endblock %}
+    </div>
+</body>
+</html>

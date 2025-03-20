@@ -1,0 +1,42 @@
+{% set width = int(sin(0.5 * c) * a) * 2 %}
+{% set height = int(cos(0.5 * c) * a) * 2 %}
+{% set gap_x = int(sin(0.5 * c) * d) %}
+{% set gap_y = int(cos(0.5 * c) * d) %}
+
+{% macro top_poly(ox, oy, color) %}
+<polygon points="{{ ox + width//2 }},{{ oy }} {{ ox + width }},{{ oy + height//2 }} {{ ox + width//2 }},{{ oy + height }} {{ ox }},{{ oy + height//2 }}" fill="{{ color }}" />
+{% endmacro %}
+{% macro right_poly(ox, oy, color) %}
+<polygon points="{{ ox + width }},{{ oy + height//2 }} {{ ox + width }},{{ oy + height//2 + b }} {{ ox + width//2 }},{{ oy + height + b }} {{ ox + width//2 }},{{ oy + height }}" fill="{{ color }}" />
+{% endmacro %}
+{% macro left_poly(ox, oy, color) %}
+    <polygon points="{{ ox }},{{ oy + height//2 }} {{ ox + width//2 }},{{ oy + height }} {{ ox + width//2 }},{{ oy + height + b }} {{ ox }},{{ oy + height//2 + b }}" fill="{{ color }}" />
+{% endmacro %}
+
+
+<svg width="28" height="28" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    {{ top_poly(x, y, "#1C2526") }}
+    {{ right_poly(x, y, "#151C1D") }}
+    {{ left_poly(x, y, "#0F1415") }}
+
+    {% set next_tile_x =  x + width//2 + gap_x %}
+    {% set next_tile_y =  y + height//2 + b + gap_y %}
+    {{ top_poly(next_tile_x, next_tile_y, "#D66A6A") }}
+    {{ right_poly(next_tile_x, next_tile_y, "#C15F5F") }}
+    {{ left_poly(next_tile_x, next_tile_y, "#AC5454") }}
+
+    {% set next_tile_x =  next_tile_x - width//2 - gap_x %}
+    {% set next_tile_y =  next_tile_y + height//2 + b + gap_y %}
+    {{ top_poly(next_tile_x, next_tile_y, "#F4A7A7") }}
+    {{ right_poly(next_tile_x, next_tile_y, "#DF9999") }}
+    {{ left_poly(next_tile_x, next_tile_y, "#CA8B8B") }}
+</svg>
+
+<!---
+x: 10
+y: 10
+a: 50
+b: 20
+c: 120
+d: 10
+---!>
