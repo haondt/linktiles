@@ -1,14 +1,16 @@
 {% extends "base.html" %}
-{% block content %}
 
+{% block content %}
 <section class="hero is-medium">
     <div class="hero-body">
         <div class="mb-4 is-flex is-flex-direction-row is-align-items-center is-justify-content-center" style="gap:8px;">
-            <img width="60rem" src="{{ SITEURL }}/static/images/logo.svg"/>
+            <img width="60rem" src="{{ url_for('static', filename='images/logo.svg') }}"/>
             <p class=" is-size-1 is-uppercase has-text-weight-medium has-text-primary">linktiles</p>
         </div>
-        <div class="notification has-background-black-bis has-border-grey-darker has-text-centered">
-            Open the settings and add an API key to get started.
+        <div class="control notification">
+            You have no tiles yet
+
+            Open the settings panel to configure your API key and layout.
         </div>
     </div>
 </section>

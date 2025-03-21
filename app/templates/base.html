@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>linktiles</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css">
+        <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+        <script src="https://unpkg.com/hyperscript.org@0.9.14"></script>
+        <script src="https://cdn.jsdelivr.net/npm/minimasonry@1.3.2/build/minimasonry.min.js"></script>
+        <link rel="icon" href="{{ url_for('static', filename='images/logo.svg') }}" type="image/svg+xml" />
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
+        <meta
+            name="htmx-config"
+            content='{
+                "responseHandling":[
+                    {"code":"401", "swap":true},
+                    {"code":"200", "swap":true}
+                ]
+            }'
+        />
+    </head>
+    <body>
+        <style>
+        </style>
+        <div class="container">
+            <nav class="navbar  mb-5" id="navbar">
+                <div class="navbar-brand ">
+                    <a  href="{{ url_for('bp.home') }}">
+                        <span class="navbar-item">
+                            <img src="{{ url_for('static', filename='images/logo.svg') }}"/>
+                            <div class="is-flex is-flex-direction-column is-justify-content-center">
+                                <p class=" is-size-6 is-uppercase has-text-weight-medium has-text-primary">linktiles</p>
+                            </div>
+                        </span>
+                    </a>
+                    <a 
+                        _="on click toggle .is-active on the next .navbar-menu toggle .is-active on me"
+                        class="navbar-burger" role="button" aria-label="menu" aria-expanded="false">
+                        <span aria-hidden="true"></span>
+                        <span aria-hidden="true"></span>
+                        <span aria-hidden="true"></span>
+                        <span aria-hidden="true"></span>
+                    </a>
+                </div>
+                <div class="navbar-menu">
+                    <div class="navbar-end">
+                    {% block navitems %}
+                    <div class="navbar-item">
+                        <a class="has-text-primary">
+                            Settings
+                        </a>
+                    </div>
+                    <div class="navbar-item">
+                        <a class="has-text-primary" href="{{ url_for('bp.logout') }}">
+                            Logout
+                        </a>
+                    </div>
+                    {% endblock %}
+                    </div>
+                </div>
+            </nav>
+            <div id="content" class="container is-fluid">
+            {% block content %}{% endblock %}
+            </div>
+        </div>
+    </body>
+</html>

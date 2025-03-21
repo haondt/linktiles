@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block navitems %}
+{% endblock %}
+
+{% block content %}
+<div class="container is-max-tablet">
+    <div class="hero-body">
+        <div class="notification">
+            <p>
+                This server is configured with an authentication proxy, disabling built-in authentication.
+                Click below to return to the home page.
+            </p>
+        </div>
+        <a href="{{ url_for('bp.home') }}">Return home</a>
+    </div>
+</section>
+{% endblock %}

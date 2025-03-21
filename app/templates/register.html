@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block navitems %}
+{% endblock %}
+
+{% block content %}
+
+<div class="container is-max-tablet">
+    <div class="subtitle is-6">
+        <strong>Register</strong>
+    </div>
+    <hr />
+    {% if error %}
+    <p class="has-text-danger mb-5">{{ error }}</p>
+    {% endif %}
+    <form hx-post="{{ url_for('bp.register') }}" hx-select-oob="#content" hx-target="#content">
+        <div class="field">
+            <label class="label">Username</label>
+            <div class="control">
+                <input name="username" autocomplete="username" value="{{ username }}" class="input" type="text" required>
+            </div>
+        </div>
+        <div class="field">
+            <label class="label">Password</label>
+            <div class="control">
+                <input name="password" autocomplete="new-password" class="input" type="password" required>
+            </div>
+        </div>
+        <div class="field">
+            <label class="label">Confirm Password</label>
+            <div class="control">
+                <input name="confirm_password" autocomplete="new-password" class="input" type="password" required>
+            </div>
+        </div>
+
+        <div class="field is-grouped">
+            <div class="control is-flex is-flex-direction-row is-align-items-center" style="gap:20px;">
+                <button class="button is-primary">Register</button>
+                <a 
+                    href="{{ url_for('bp.login') }}"
+                    hx-target="#content"
+                    hx-select="#content"
+                    hx-boost="true"
+                    class="">Login</a>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
