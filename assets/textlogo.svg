@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="27.767729mm"
+   height="6.2970839mm"
+   viewBox="0 0 27.767729 6.2970839"
+   version="1.1"
+   id="svg8"
+   inkscape:version="0.92.1 r15371"
+   sodipodi:docname="textlogo.svg">
+  <defs
+     id="defs2" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="3.959798"
+     inkscape:cx="52.809945"
+     inkscape:cy="9.7442434"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:snap-text-baseline="true"
+     inkscape:window-width="1118"
+     inkscape:window-height="1326"
+     inkscape:window-x="13"
+     inkscape:window-y="20"
+     inkscape:window-maximized="0" />
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-92.076059,-123.86804)">
+    <g
+       id="g4520"
+       transform="matrix(0.03704167,0,0,0.03704167,91.705642,123.49762)">
+      <polygon
+         id="polygon4485"
+         points="53,10 96,35 53,60 10,35 "
+         style="fill:#1c2526" />
+      <polygon
+         id="polygon4487"
+         points="96,35 96,55 53,80 53,60 "
+         style="fill:#151c1d" />
+      <polygon
+         id="polygon4489"
+         points="10,35 53,60 53,80 10,55 "
+         style="fill:#0f1415" />
+      <polygon
+         id="polygon4491"
+         points="104,60 147,85 104,110 61,85 "
+         style="fill:#d66a6a" />
+      <polygon
+         id="polygon4493"
+         points="147,85 147,105 104,130 104,110 "
+         style="fill:#c15f5f" />
+      <polygon
+         id="polygon4495"
+         points="61,85 104,110 104,130 61,105 "
+         style="fill:#ac5454" />
+      <polygon
+         id="polygon4497"
+         points="53,110 96,135 53,160 10,135 "
+         style="fill:#f4a7a7" />
+      <polygon
+         id="polygon4499"
+         points="96,135 96,155 53,180 53,160 "
+         style="fill:#df9999" />
+      <polygon
+         id="polygon4501"
+         points="10,135 53,160 53,180 10,155 "
+         style="fill:#ca8b8b" />
+    </g>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.58333302px;line-height:1.25;font-family:impact;-inkscape-font-specification:impact;letter-spacing:0px;word-spacing:0px;fill:#d66a6a;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="99.023354"
+       y="129.62247"
+       id="text4524"><tspan
+         sodipodi:role="line"
+         id="tspan4522"
+         x="99.023354"
+         y="129.62247"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.3499999px;font-family:'Segoe UI';-inkscape-font-specification:'Segoe UI, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#d66a6a;fill-opacity:1;stroke-width:0.26458332">linktiles</tspan></text>
+  </g>
+</svg>
