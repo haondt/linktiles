@@ -1,6 +1,6 @@
 <div class="tabs is-fullwidth">
     <ul>
-        {% for tab in [('Tiles', 'bp.tiles_settings'), ('General', 'bp.general_settings')] %}
+        {% for tab in [('Tiles', 'bp.tiles_settings'), ('General', 'bp.general_settings'), ('Integrations', 'bp.integration_settings')] %}
             {% if active == tab[0] %}
             <li class="is-active"><a>{{ tab[0] }}</a></li>
             {% else %}

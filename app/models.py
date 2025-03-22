@@ -8,12 +8,14 @@ class User(UserMixin):
 class ThinUser(BaseModel):
     pass
 
+class LinkdingApiConnectionData(BaseModel):
+    base_url: str
+    api_key: str
+
 class UserData(BaseModel):
     username: str
     password_hash: bytes | None = None
-    linkding_api_key: str | None = None
-    class Config:
-        exclude_none = True
+    linkding: LinkdingApiConnectionData | None = None
 
 class ExtendedThinUser(BaseModel):
     user: ThinUser
@@ -24,6 +26,7 @@ class TileConfiguration(BaseModel):
     tags: str | None = None
     groups: str | None = None
     limit: int = 100
+
 class TileConfigurationList(RootModel):
     root: list[TileConfiguration]
 

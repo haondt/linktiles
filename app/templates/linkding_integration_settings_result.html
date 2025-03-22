@@ -1,0 +1,9 @@
+<div hx-swap-oob="outerHTML" class="field" id="linkding-integration-settings-result">
+    {% if success %}
+    <p class="help is-success">
+    {% else %}
+    <p class="help has-text-danger">
+    {% endif %}
+        {{ message }}
+    </p>
+</div>

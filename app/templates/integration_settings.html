@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% with active='Integrations' %}
+{% include 'settings.html' %}
+{% endwith %}
+
+<div class="block">
+    <strong>Linkding API</strong>
+    <br>
+    <p>Configure the linkding API connection.</p>
+    <form 
+        hx-post="{{ url_for('bp.linkding_integration_settings') }}"
+        hx-swap="none"
+        class="mt-2">
+        <div class="field">
+            <div class="control">
+                <input
+                    class="input"
+                    placeholder="base url" 
+                    name="base_url" 
+                    type="url"ext  
+                    value="{{ linkding_base_url or '' }}" required>
+            </div>
+        </div>
+
+        <div class="field">
+            <div class="control">
+                <input class="input" placeholder="api key" name="api_key" type="password" required>
+            </div>
+        </div>
+
+        <div id="linkding-integration-settings-result"></div>
+
+        <div class="field">
+            <div class="control">
+                <button class="button is-primary"
+                    _="on click set #linkding-integration-settings-result's innerHTML to ''">Test & save</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+{% endblock %}

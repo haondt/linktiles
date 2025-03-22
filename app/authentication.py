@@ -1,5 +1,7 @@
 from flask import Request, g
 from flask.sessions import SecureCookieSessionInterface
+
+from .models import LinkdingApiConnectionData
 from .configuration import configuration
 from .storage import storage
 from flask_login import LoginManager
@@ -70,6 +72,7 @@ def change_password(username: str, password: str | None) -> bool:
     hashed = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()) if password is not None else None
     user_data.password_hash = hashed
     return storage.update_user(user, user_data)
+
 
 login_required = flask_login_login_required
 logout_user = flask_login_logout_user

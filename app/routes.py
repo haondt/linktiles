@@ -6,6 +6,7 @@ from .tiles import get_tiles_configuration, update_tiles_configuration
 from .authentication import login_user, login_required, logout_user, login_manager, register_user, verify_password, current_user
 from .authentication import change_password as change_user_password
 from .configuration import configuration
+from . import linkding, linktiles_user
 
 login_manager.login_view = "bp.login"
 
@@ -130,7 +131,32 @@ def add_routes(app):
     @login_required
     def general_settings():
         return render_template('general_settings.html')
-        
+
+    @bp.route('settings/integrations', methods=['GET'])
+    @login_required
+    def integration_settings():
+        id =  current_user.get_id()
+        linkding_data = linktiles_user.get_linkding_connection_data(id)
+        if linkding_data is not None:
+            return render_template('integration_settings.html', linkding_base_url=linkding_data.base_url)
+        return render_template('integration_settings.html')
+
+    @bp.route('settings/integrations/linkding', methods=['POST'])
+    @login_required
+    def linkding_integration_settings():
+        base_url = request.form['base_url']
+        api_key = request.form['api_key']
+        success, error_message = linkding.test(base_url, api_key)
+        if not success:
+            message = error_message or 'Failed to connect to the linkding API.'
+            return render_template('linkding_integration_settings_result.html', success=success, message=message)
+
+        if not linktiles_user.upsert_linkding_connection_data(current_user.get_id(), base_url, api_key):
+            message = "Failed to save the updated connection data. Please try again."
+            return render_template('linkding_integration_settings_result.html', success=False, message=message)
+
+        message = 'Successfully connected to the linkding API.'
+        return render_template('linkding_integration_settings_result.html', success=True, message=message)
 
     app.register_blueprint(bp)
 
