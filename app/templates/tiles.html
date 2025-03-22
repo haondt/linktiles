@@ -9,7 +9,7 @@
 
 <div class="masonry-container" 
     _="
-    on load
+    on load[event.target==me]
         js(me)
             return new MiniMasonry({
                 container: me
@@ -18,7 +18,7 @@
         set :mm to it
     end
 
-    on htmx:beforeCleanupElement
+    on htmx:beforeCleanupElement[event.target==me]
         set mm to :mm
         js(mm)
             mm.destroy()

@@ -13,7 +13,7 @@
     {% if error %}
     <p class="has-text-danger mb-5">{{ error }}</p>
     {% endif %}
-    <form hx-post="{{ url_for('bp.register') }}" hx-select-oob="#content" hx-target="#content">
+    <form hx-post="{{ url_for('bp.register') }}" hx-select-oob="#content" hx-target="#content" hx-swap="outerHTML">
         <div class="field">
             <label class="label">Username</label>
             <div class="control">
@@ -40,6 +40,7 @@
                     href="{{ url_for('bp.login') }}"
                     hx-target="#content"
                     hx-select="#content"
+                    hx-swap="outerHTML"
                     hx-boost="true"
                     class="">Login</a>
             </div>

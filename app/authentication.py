@@ -6,6 +6,7 @@ from flask_login import LoginManager
 from flask_login import login_user as flask_login_login_user
 from flask_login import login_required as flask_login_login_required
 from flask_login import logout_user as flask_login_logout_user
+from flask_login import current_user as flask_login_current_user
 import bcrypt
 
 login_manager = LoginManager()
@@ -51,5 +52,25 @@ def register_user(username: str, password: str | None = None) -> bool:
     hashed = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()) if password is not None else None
     return storage.add_user(username, hashed)
 
+def verify_password(username: str, password: str) -> bool:
+    user_data = storage.get_user_data(username)
+    if user_data is None:
+        return False
+    if user_data.password_hash is None:
+        return False
+    if not bcrypt.checkpw(password.encode('utf-8'), user_data.password_hash):
+        return False
+    return True
+
+def change_password(username: str, password: str | None) -> bool:
+    result = storage.get_user_and_data(username)
+    if result is None:
+        return False
+    user, user_data = result
+    hashed = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()) if password is not None else None
+    user_data.password_hash = hashed
+    return storage.update_user(user, user_data)
+
 login_required = flask_login_login_required
 logout_user = flask_login_logout_user
+current_user =  flask_login_current_user

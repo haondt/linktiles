@@ -92,19 +92,19 @@
 
 <div 
     id="tile-configuration-list"
-    class="is-flex is-flex-direction-column gap-1 mb-6 sortable"
+    class="is-flex is-flex-direction-column gap-1 sortable"
     _="
-    on load
+    on load[event.target==me]
         js(me)
-        return new Sortable(me, { animation: 100, ghostClass: 'sortable-ghost', handle: '.tile-configuration-handle'});
+            return new Sortable(me, { animation: 100, ghostClass: 'sortable-ghost', handle: '.tile-configuration-handle'});
         end
         set :sortable to it
     end
 
-    on htmx:beforeCleanupElement
+    on htmx:beforeCleanupElement[event.target==me]
         set sortable to :sortable
         js(sortable)
-            sortable.destroy()
+          sortable.destroy();
         end
     end">
     {% for i in '12345' %}

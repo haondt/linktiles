@@ -1,10 +1,19 @@
 <div class="tabs is-fullwidth">
     <ul>
-        {% for tab in ['Tiles', 'General'] %}
-            {% if active == tab %}
-            <li class="is-active"><a>{{ tab }}</a></li>
+        {% for tab in [('Tiles', 'bp.tiles_settings'), ('General', 'bp.general_settings')] %}
+            {% if active == tab[0] %}
+            <li class="is-active"><a>{{ tab[0] }}</a></li>
             {% else %}
-            <li><a>{{ tab }}</a></li>
+            <li>
+                <a 
+                    href="{{ url_for(tab[1]) }}"
+                    hx-boost="true"
+                    hx-select="#content"
+                    hx-target="#content"
+                    hx-swap="outerHTML">
+                    {{ tab[0] }}
+                </a>
+            </li>
             {% endif %}
         {% endfor %}
     </ul>

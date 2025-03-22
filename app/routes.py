@@ -1,5 +1,6 @@
 from flask import Blueprint, Response, redirect, render_template, request, url_for
-from .authentication import login_user, login_required, logout_user, login_manager, register_user
+from .authentication import login_user, login_required, logout_user, login_manager, register_user, verify_password, current_user
+from .authentication import change_password as change_user_password
 from .configuration import configuration
 
 login_manager.login_view = "bp.login"
@@ -22,6 +23,32 @@ def add_routes(app):
             return redirect(configuration.auth_proxy_logout_url or url_for('bp.login'))
         logout_user()
         return redirect(url_for('bp.login'))
+
+    @bp.route('change-password', methods=['GET', 'POST'])
+    @login_required
+    def change_password():
+        if configuration.enable_auth_proxy:
+            return render_template('auth_proxy_error.html')
+
+        if request.method == 'GET':
+            return render_template('change_password.html')
+
+        old_password = request.form['old_password']
+        new_password = request.form['new_password']
+        new_password_confirm = request.form['new_password_confirm']
+
+        user_id = current_user.get_id()
+
+        if not verify_password(user_id, old_password):
+            return render_template('change_password.html', error='Your old password was entered incorrectly. Please enter it again.')
+
+        if new_password != new_password_confirm:
+            return render_template('change_password.html', error='The two password fields didn\'t match.')
+
+        if not change_user_password(user_id, new_password):
+            return render_template('change_password.html', error='Unable to change password. Please try again.')
+
+        return render_template('change_password.html', success=True)
 
     @bp.route('login', methods=['GET', 'POST'])
     def login():
@@ -85,6 +112,11 @@ def add_routes(app):
     @login_required
     def tiles_settings():
         return render_template('tiles_settings.html')
+
+    @bp.route('settings/general', methods=['GET'])
+    @login_required
+    def general_settings():
+        return render_template('general_settings.html')
         
 
     app.register_blueprint(bp)

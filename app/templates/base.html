@@ -18,7 +18,8 @@
                 "responseHandling":[
                     {"code":"401", "swap":true},
                     {"code":"200", "swap":true}
-                ]
+                ],
+                "scrollIntoViewOnBoost": false
             }'
         />
     </head>
@@ -49,12 +50,13 @@
                     <div class="navbar-end">
                     {% block navitems %}
                     <div class="navbar-item">
-                        <button class="button is-primary">
-                            Edit tiles
-                        </button>
-                    </div>
-                    <div class="navbar-item">
-                        <a class="has-text-primary">
+                        <a 
+                            href="{{ url_for('bp.tiles_settings') }}"
+                            hx-target="#content"
+                            hx-select="#content"
+                            hx-boost="true"
+                            hx-swap="outerHTML"
+                            class="has-text-primary">
                             Settings
                         </a>
                     </div>
@@ -71,5 +73,8 @@
             {% block content %}{% endblock %}
             </div>
         </div>
+        <footer class="footer">
+
+        </footer>
     </body>
 </html>

@@ -24,6 +24,13 @@ class MemoryStorage():
         self.user_data[id] = UserData(id, username, password_hash)
         return True
 
+    def update_user(self, user: User, user_data: UserData) -> bool:
+        if not self.get_user(user.id):
+            return False
+        self.users[user.id] = user
+        self.user_data[user.id] = user_data
+        return True
+
     def get_or_create_user(self, username) -> User | None:
         id = convert_username_to_id(username)
         self.add_user(username, None)
@@ -100,11 +107,15 @@ class RedisStorage():
         result = self.client.setnx(f'{self.user_prefix}:{id}', self.serialize_user(user, user_data))
         return bool(result)
 
+    def update_user(self, user: User, user_data: UserData) -> bool:
+        result = self.client.set(f'{self.user_prefix}:{user.id}', self.serialize_user(user, user_data), xx=True)
+        return bool(result)
+
     def get_or_create_user(self, username) -> User | None:
         self.add_user(username, None)
         return self.get_user(username)
     
-    def get_user_data(self, username) -> UserData | None:
+    def get_user_data(self, username: str) -> UserData | None:
         result = self.get_user_and_data(username)
         return result[1] if result else None
 

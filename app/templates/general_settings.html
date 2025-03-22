@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% with active='General' %}
+{% include 'settings.html' %}
+{% endwith %}
+
+<div class="block">
+    <strong>Profile</strong>
+    <br>
+    <a
+        href="{{ url_for('bp.change_password') }}"
+        hx-target="#content"
+        hx-select="#content"
+        hx-boost="true"
+        hx-swap="outerHTML"
+        class="has-text-primary">
+        Change password
+    </a>
+</div>
+
+<div class="block">
+    <strong>Tile Colors</strong>
+    <form class="mt-2 field">
+        <div class="control">
+            <div class="select">
+                <select>
+                    <option>Random</option>
+                    <option>Really random</option>
+                    <option>Darker</option>
+                    <option>Dark</option>
+                    <option>Bright</option>
+                    <option>Brighter</option>
+                </select>
+            </div>
+        </div>
+        <p class="help">
+            How to select the colors for each tile.
+        </p>
+    </form>
+</div>
+
+<div class="block">
+    <strong>Tile Fill</strong>
+    <form class="mt-2 field">
+        <div class="control">
+            <div class="select">
+                <select>
+                    <option>Fill</option>
+                    <option>Outline</option>
+                </select>
+            </div>
+        </div>
+        <p class="help">
+            How to apply the color to the tile.
+        </p>
+    </form>
+</div>
+
+<div class="block">
+    <strong>Title Location</strong>
+    <form class="mt-2 field">
+        <div class="control">
+            <div class="select">
+                <select>
+                    <option>Inside</option>
+                    <option>Outside</option>
+                </select>
+            </div>
+        </div>
+        <p class="help">
+            Where to display the tile titles.
+        </p>
+    </form>
+</div>
+
+<div class="block">
+    <strong>Title Width</strong>
+    <form class="mt-2 field">
+        <div class="control">
+            <div class="select">
+                <select>
+                    <option>Inside</option>
+                    <option>Outside</option>
+                </select>
+            </div>
+        </div>
+        <p class="help">
+            Target width for each tile.
+        </p>
+    </form>
+</div>
+
+<div class="block">
+    <strong>Layout</strong>
+    <form class="mt-2 field">
+        <div class="control">
+            <div class="select">
+                <select>
+                    <option>Masonry</option>
+                    <option>Grid</option>
+                    <option>Clustered</option>
+                </select>
+            </div>
+        </div>
+        <p class="help">
+            How to lay out the tiles.
+        </p>
+    </form>
+</div>
+
+{% endblock %}
