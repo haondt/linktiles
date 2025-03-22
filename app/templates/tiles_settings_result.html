@@ -1,0 +1,19 @@
+<div id="tiles-settings-result" class="mb-4" hx-swap-oob="true">
+{% if error %}
+{{ error }}
+{% endif %}
+
+{% if success %}
+<div class="notification is-success">
+    Tiles updated
+</div>
+{% endif %}
+
+{% if validation_errors %}
+<div class="control">
+{% for validation_error in validation_errors %}
+<p class="has-text-danger">{{ validation_error.loc }}: {{ validation_error.msg }}</p>
+</div>
+{% endfor %}
+{% endif %}
+</div>

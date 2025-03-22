@@ -21,12 +21,37 @@
         </div>
     </div>
     <div class="level-right">
-        <button class="button is-primary">
+        <button class="button is-primary"
+            hx-trigger="submit"
+            hx-post="{{ url_for('bp.tiles_settings') }}"
+            hx-vals='js:{"data": JSON.stringify({tiles: event.detail.value})}'
+            hx-swap="none"
+            _="on click
+                set #tiles-settings-result's innerHTML to ''
+                set data to []
+                for configuration in .tile-configuration in #tile-configuration-list
+                    set current to {}
+                    for input in <input/> in configuration
+						set key to input's name
+						set value to `${input's value}`
+                        if value is ''
+                            continue
+                        end
+                        if input's type is 'number'
+                            set value to Number(value)
+                        end
+                        set current[key] to value
+                    end
+                    append current to data
+                end
+                send submit(value: data) to me
+            ">
             Save
         </button>
     </div>
 </div>
 
+<div id="tiles-settings-result"></div>
 
 <div id="help-modal" class="modal">
     <div 
@@ -107,8 +132,11 @@
           sortable.destroy();
         end
     end">
-    {% for i in '12345' %}
-    {% include "tile_configuration.html" %}
+    {% for tile in tiles %}
+    {% with %}
+        {% set title = tile.title %}
+        {% include "tile_configuration.html" %}
+    {% endwith %}
     {% endfor %}
 </div>
 {% endblock %}

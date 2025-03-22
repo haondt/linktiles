@@ -14,7 +14,7 @@
             </div>
             <div class="field-body">
                 <div class="field">
-                    <input class="input name="title" type="text" value="{{ title }}">
+                    <input class="input" name="title" type="text" value="{{ title or '' }}">
                 </div>
             </div>
         </div>
@@ -25,7 +25,7 @@
             </div>
             <div class="field-body">
                 <div class="field">
-                    <input class="input name="tags" type="text" value="{{ tags }}">
+                    <input class="input" name="tags" type="text" value="{{ tags or '' }}"> 
                 </div>
             </div>
         </div>
@@ -36,7 +36,7 @@
             </div>
             <div class="field-body">
                 <div class="field">
-                    <input class="input name="limit" type="number" placeholder="100" value="{{ limit }}">
+                    <input class="input" name="limit" type="number" step="1" placeholder="100" value="{{ limit }}">
                 </div>
             </div>
         </div>
@@ -47,7 +47,7 @@
             </div>
             <div class="field-body">
                 <div class="field">
-                    <input class="input name="groups" type="text" value="{{ groups }}">
+                    <input class="input" name="groups" type="text" value="{{ groups or '' }}">
                 </div>
             </div>
         </div>

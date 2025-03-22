@@ -1,7 +1,6 @@
-from flask import json
 from flask_login import confirm_login
-from .models import User, UserData
-import redis, base64
+from .models import ExtendedThinUser, ThinUser, TileConfiguration, TileConfigurationList, User, UserData
+import redis
 from .configuration import configuration
 
 def convert_username_to_id(username: str) -> str:
@@ -11,6 +10,7 @@ class MemoryStorage():
     def __init__(self):
         self.users: dict[str, User] = {}
         self.user_data: dict[str, UserData] = {}
+        self.tiles: dict[str, list[TileConfiguration]] = {}
 
     def get_user(self, username) -> User | None:
         id = convert_username_to_id(username)
@@ -21,7 +21,7 @@ class MemoryStorage():
         if self.get_user(id):
             return False
         self.users[id] = User(id)
-        self.user_data[id] = UserData(id, username, password_hash)
+        self.user_data[id] = UserData(username=username, password_hash=password_hash)
         return True
 
     def update_user(self, user: User, user_data: UserData) -> bool:
@@ -50,6 +50,12 @@ class MemoryStorage():
             return None
         return user, data
 
+    def upsert_tiles(self, user_id: str, tiles: list[TileConfiguration]) -> None:
+        self.tiles[user_id] = tiles
+
+    def get_tiles(self, user_id: str) -> list[TileConfiguration] | None:
+        return self.tiles.get(user_id, None)
+
 class RedisStorage():
     def __init__(self):
         assert configuration.db_port is not None
@@ -59,37 +65,14 @@ class RedisStorage():
             password=configuration.db_password,
             decode_responses=True)
         self.user_prefix = 'user'
+        self.tiles_prefix = 'tiles:tiles'
 
     def deserialize_user(self, id: str, data: str) -> tuple[User, UserData]:
-        j = json.loads(data)
-        user = j['user']
-        user_data = j['data']
-        password_hash_string = user_data.get('password_hash')
-        if password_hash_string is None:
-            password_hash = None
-        else:
-            password_hash = base64.b64decode(password_hash_string)
+        user =  ExtendedThinUser.model_validate_json(data)
+        return User(id), user.data
 
-        linkding_api_key = user_data.get('linkding_api_key')
-
-        return User(id), UserData(id, user_data['username'], password_hash, linkding_api_key)
-
-    def serialize_user(self, user: User, user_data: UserData):
-        if user_data.password_hash is None:
-            password_hash_string = None
-        else:
-            password_hash_string = base64.b64encode(user_data.password_hash).decode('utf-8')
-
-        j = {
-            'user': {},
-            'data': {
-                'username': user_data.username,
-                'password_hash': password_hash_string,
-                'linkding_api_key': user_data.linkding_api_key
-            }
-        }
-
-        return json.dumps(j)
+    def serialize_user(self, user: User, user_data: UserData) -> str:
+        return ExtendedThinUser(user=ThinUser(), data=user_data).model_dump_json()
 
     def get_user_and_data(self, username) -> tuple[User, UserData] | None:
         id = convert_username_to_id(username)
@@ -103,7 +86,7 @@ class RedisStorage():
     def add_user(self, username, password_hash: bytes | None) -> bool:
         id = convert_username_to_id(username)
         user = User(id)
-        user_data = UserData(id, username, password_hash)
+        user_data = UserData(username=username, password_hash=password_hash)
         result = self.client.setnx(f'{self.user_prefix}:{id}', self.serialize_user(user, user_data))
         return bool(result)
 
@@ -118,6 +101,14 @@ class RedisStorage():
     def get_user_data(self, username: str) -> UserData | None:
         result = self.get_user_and_data(username)
         return result[1] if result else None
+
+    def upsert_tiles(self, user_id: str, tiles: list[TileConfiguration]) -> None:
+        assert self.client.set(f'{self.tiles_prefix}:{user_id}', TileConfigurationList(root=tiles).model_dump_json())
+
+    def get_tiles(self, user_id: str) -> list[TileConfiguration] | None:
+        result = self.client.get(f'{self.tiles_prefix}:{user_id}')
+        return TileConfigurationList.model_validate_json(str(result)).root if result else None
+
 
 if configuration.db_engine == 'redis':
     storage = RedisStorage()

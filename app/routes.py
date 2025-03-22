@@ -1,4 +1,8 @@
 from flask import Blueprint, Response, redirect, render_template, request, url_for
+from pydantic import ValidationError
+
+from .models import TilesSettingsRequest
+from .tiles import get_tiles_configuration, update_tiles_configuration
 from .authentication import login_user, login_required, logout_user, login_manager, register_user, verify_password, current_user
 from .authentication import change_password as change_user_password
 from .configuration import configuration
@@ -108,10 +112,19 @@ def add_routes(app):
     def settings():
         return redirect(url_for('bp.tiles_settings'))
 
-    @bp.route('settings/tiles', methods=['GET'])
+    @bp.route('settings/tiles', methods=['GET', 'POST'])
     @login_required
     def tiles_settings():
-        return render_template('tiles_settings.html')
+        if request.method == 'GET':
+            tiles = get_tiles_configuration(current_user.get_id())
+            return render_template('tiles_settings.html', tiles=tiles)
+        data = request.form['data']
+        try:
+            deserialized = TilesSettingsRequest.model_validate_json(data)
+        except ValidationError as e:
+            return render_template('tiles_settings_result.html',  validation_errors=e.errors())
+        update_tiles_configuration(current_user.get_id(), deserialized.tiles)
+        return render_template('tiles_settings_result.html',  success=True)
 
     @bp.route('settings/general', methods=['GET'])
     @login_required
