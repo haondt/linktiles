@@ -83,13 +83,18 @@
 }
 .tile-configuration-body {
     padding: 1.5rem;
-    background-color: var(--bulma-black-ter);
+    background-color: var(--bulma-black-bis);
+    border: 1px solid var(--bulma-grey-dark);
     width:100%;
     border-top-right-radius:var(--bulma-radius);
     border-bottom-right-radius:var(--bulma-radius);
 }
 .tile-configuration-handle {
     cursor: grab;
+    .button {
+        background-color: var(--bulma-black-bis);
+        border: 1px solid var(--bulma-grey-dark);
+    }
 }
 
 .tile-configuration-actions  a:hover {
