@@ -35,7 +35,7 @@ By default the application will use an in-memory storage for data, meaninig it w
 Start the Flask server with debug mode enabled with
 
 ```sh
-LT_ENVIRONMNET=dev python3 -m app
+LT_ENVIRONMENT=dev python3 -m app
 ```
 
 The frontend is now available under http://localhost:5001

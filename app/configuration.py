@@ -29,7 +29,9 @@ class Config:
         self.auth_proxy_logout_url = os.getenv('LT_AUTH_PROXY_LOGOUT_URL', None)
         self.secret_key = os.getenv('LT_SECRET_KEY', DEFAULT_SECRET_KEY)
         self.enable_registration = os.getenv('LT_DISABLE_SIGNUPS', DEFAULT_SECRET_KEY)
+        self.is_development = os.getenv('LT_ENVIRONMENT', 'prod') in ['dev', 'development']
         self.context_path = os.getenv('LT_CONTEXT_PATH', None)
+        self.server_port = int(os.getenv('LT_SERVER_PORT', 5001))
 
         self.db_engine = os.getenv('LT_DB_ENGINE', 'memory')
         if self.db_engine not in ['memory', 'redis']:

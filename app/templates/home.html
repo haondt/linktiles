@@ -1,16 +1,19 @@
 {% extends "base.html" %}
 
 {% block content %}
-<section class="hero is-medium">
+<section class="hero is-small">
     <div class="hero-body">
-        <div class="mb-4 is-flex is-flex-direction-row is-align-items-center is-justify-content-center" style="gap:8px;">
-            <img width="60rem" src="{{ url_for('static', filename='images/logo.svg') }}"/>
-            <p class=" is-size-1 is-uppercase has-text-weight-medium has-text-primary">linktiles</p>
-        </div>
-        <div class="control notification">
-            You have no tiles yet
-
-            Open the settings panel to configure your API key and layout.
+        <div class="container is-max-tablet notification">
+            <div class="section has-text-centered">
+                <p class="subtitle">
+                    <strong>
+                        You have no tiles yet
+                    </strong>
+                </p>
+                <p class="has-text-centered">
+                    Open the settings panel to configure your API key or click "Edit tiles" to edit your layout.
+                </p>
+            </div>
         </div>
     </div>
 </section>

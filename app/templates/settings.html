@@ -1,0 +1,12 @@
+<div class="tabs is-fullwidth">
+    <ul>
+        {% for tab in ['Tiles', 'General'] %}
+            {% if active == tab %}
+            <li class="is-active"><a>{{ tab }}</a></li>
+            {% else %}
+            <li><a>{{ tab }}</a></li>
+            {% endif %}
+        {% endfor %}
+    </ul>
+</div>
+

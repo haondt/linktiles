@@ -66,6 +66,27 @@ def add_routes(app):
         resp.headers['HX-Redirect'] = url_for('bp.home')
         return resp
 
+    @bp.route('fragments/tag', methods=['GET'])
+    @login_required
+    def tag_fragment():
+        return render_template('tag.html', value=request.args.get('value'))
+
+    @bp.route('fragments/tile_configuration', methods=['GET'])
+    @login_required
+    def tile_configuration_fragment():
+        return render_template('tile_configuration.html')
+
+    @bp.route('settings', methods=['GET'])
+    @login_required
+    def settings():
+        return redirect(url_for('bp.tiles_settings'))
+
+    @bp.route('settings/tiles', methods=['GET'])
+    @login_required
+    def tiles_settings():
+        return render_template('tiles_settings.html')
+        
+
     app.register_blueprint(bp)
 
 

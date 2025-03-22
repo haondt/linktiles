@@ -1,0 +1,74 @@
+<div class="field has-addons tile-configuration">
+    <div class="control tile-configuration-handle">
+        <button class="button is-static is-dark" style="height:100%">
+            <span class="icon">
+                <i class="fa-solid fa-grip-lines"></i>
+            </span>
+        </button>
+    </div>
+
+    <div class="tile-configuration-body">
+        <div class="field is-horizontal">
+            <div class="field-label is-normal">
+                <label class="label">Title</label>
+            </div>
+            <div class="field-body">
+                <div class="field">
+                    <input class="input name="title" type="text" value="{{ title }}">
+                </div>
+            </div>
+        </div>
+
+        <div class="field is-horizontal">
+            <div class="field-label is-normal">
+                <label class="label">Tags</label>
+            </div>
+            <div class="field-body">
+                <div class="field">
+                    <input class="input name="tags" type="text" value="{{ tags }}">
+                </div>
+            </div>
+        </div>
+
+        <div class="field is-horizontal">
+            <div class="field-label is-normal">
+                <label class="label">Limit</label>
+            </div>
+            <div class="field-body">
+                <div class="field">
+                    <input class="input name="limit" type="number" placeholder="100" value="{{ limit }}">
+                </div>
+            </div>
+        </div>
+
+        <div class="field is-horizontal">
+            <div class="field-label is-normal">
+                <label class="label">Groups</label>
+            </div>
+            <div class="field-body">
+                <div class="field">
+                    <input class="input name="groups" type="text" value="{{ groups }}">
+                </div>
+            </div>
+        </div>
+        <div class="tile-configuration-actions has-text-right">
+            <a class="remove-button"
+                _="on click add .is-hidden to me then remove .is-hidden from the next <div/>">
+                Remove
+            </a>
+            <div class="is-hidden">
+                <a
+                    _="on click remove the closest .tile-configuration"
+                    class="has-text-danger">
+                    Confirm
+                </a>
+                <a 
+                    _="on click add .is-hidden to the closest <div/> then remove .is-hidden from the previous .remove-button"
+                    class="ml-2">
+                    Cancel
+                </a>
+            </div>
+        </div>
+    </div>
+
+</div>

@@ -13,7 +13,17 @@
   --bulma-info-s: 74%;
   --bulma-info-l: 82%;
 
+  
+  --bulma-success-h: 103deg;
+  --bulma-success-s: 30%;
+  --bulma-success-l: 55%;
+
   --bulma-hr-margin: 1rem 0;
+
+  .button {
+
+      --bulma-button-weight: var(--bulma-weight-normal);
+  }
 
   color-scheme: dark;
 
@@ -32,4 +42,60 @@
       position: absolute;
   }
 
+
+}
+
+.gap-0 { gap: 0; }
+.gap-1 { gap: 0.25rem; }
+.gap-2 { gap: 0.5rem; }
+.gap-3 { gap: 0.75rem; }
+.gap-4 { gap: 1rem; }
+.gap-5 { gap: 1.25rem; }
+.gap-6 { gap: 1.5rem; }
+.gap-7 { gap: 1.75rem; }
+.gap-8 { gap: 2rem; }
+
+.vr {
+    background-color: var(--bulma-hr-background-color);
+    border: none;
+    display: block;
+    width: var(--bulma-hr-height);
+    height: 100%;
+    margin: 0 1rem;
+}
+
+.is-align-self-strecth {
+    align-self: stretch;
+}
+
+.content {
+    --bulma-content-heading-weight: var(--bulma-weight-semibold);
+}
+
+.message-body code, .message-body pre {
+    background-color: var(--bulma-grey-darker);
+    color: var(--bulma-code);
+}
+
+.tile-configuration.sortable-ghost > .tile-configuration-body,
+.tile-configuration.sortable-ghost > .tile-configuration-handle > .button {
+    border: 1px solid var(--bulma-info);
+}
+.tile-configuration-body {
+    padding: 1.5rem;
+    background-color: var(--bulma-black-ter);
+    width:100%;
+    border-top-right-radius:var(--bulma-radius);
+    border-bottom-right-radius:var(--bulma-radius);
+}
+.tile-configuration-handle {
+    cursor: grab;
+}
+
+.tile-configuration-actions  a:hover {
+    text-decoration: underline;
+}
+
+.tile-configuration-actions  a {
+    font-size: var(--bulma-small-font-size);
 }

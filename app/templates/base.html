@@ -8,6 +8,8 @@
         <script src="https://unpkg.com/htmx.org@2.0.4"></script>
         <script src="https://unpkg.com/hyperscript.org@0.9.14"></script>
         <script src="https://cdn.jsdelivr.net/npm/minimasonry@1.3.2/build/minimasonry.min.js"></script>
+        <script src="https://kit.fontawesome.com/afd44816da.js" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.6/Sortable.min.js"></script>
         <link rel="icon" href="{{ url_for('static', filename='images/logo.svg') }}" type="image/svg+xml" />
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
         <meta
@@ -24,7 +26,7 @@
         <style>
         </style>
         <div class="container">
-            <nav class="navbar  mb-5" id="navbar">
+            <nav class="navbar mt-3 mb-5" id="navbar">
                 <div class="navbar-brand ">
                     <a  href="{{ url_for('bp.home') }}">
                         <span class="navbar-item">
@@ -46,6 +48,11 @@
                 <div class="navbar-menu">
                     <div class="navbar-end">
                     {% block navitems %}
+                    <div class="navbar-item">
+                        <button class="button is-primary">
+                            Edit tiles
+                        </button>
+                    </div>
                     <div class="navbar-item">
                         <a class="has-text-primary">
                             Settings

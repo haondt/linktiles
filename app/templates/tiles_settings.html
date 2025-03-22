@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% with active='Tiles' %}
+{% include 'settings.html' %}
+{% endwith %}
+
+<div class="level mb-5">
+    <div class="level-left">
+        <div class="buttons">
+            <button
+                hx-get="{{ url_for('bp.tile_configuration_fragment') }}"
+                hx-target="#tile-configuration-list"
+                hx-swap="afterbegin"
+                class="button has-text-info">
+                Add Tile
+            </button>
+            <button class="button" _="on click add .is-active to #help-modal">
+                Help
+            </button>
+        </div>
+    </div>
+    <div class="level-right">
+        <button class="button is-primary">
+            Save
+        </button>
+    </div>
+</div>
+
+
+<div id="help-modal" class="modal">
+    <div 
+    class="modal-background"
+    _="
+        on click
+            remove .is-active from #help-modal
+        end
+        on keydown(key) from elsewhere
+            if the key is 'Escape'
+                send click to me
+            end
+        end
+    "></div>
+    <div class="modal-content">
+        <div class="message is-dark">
+            <div class="message-header">
+                Help
+            </div>
+            <div class="message-body">
+                <div class="content">
+                    <p>
+                        Welcome to the tiles configuration! Each tile in this list represents one tile on the homepage. You may drag and drop these tiles to change their order. Don't forget to save once you're done making edits.
+                    </p>
+                    <p>
+                        There are several fields on the tile configuration:
+                    </p>
+                    <h6>Title</h6>
+                    <p>
+                        Optional, if given it will be displayed at the top of the tile.
+                    </p>
+                    <h6>Tags</h6>
+                    <p>
+                        Enter any number of tags separated by space and <strong>without</strong> the hash (#). linktiles will use these tags to form the search query to linkding that populates this tile.
+                    </p>
+                    <h6>Limit</h6>
+                    <p>
+                        The maximum number of links to fetch from linkding for this tiles query. Default is 100.
+                    </p>
+                    <h6>Groups</h6>
+                    <p>
+                        Similar to the <strong>Tags</strong> field, you may enter any number of space-delimited tags here. Within the tile, links will be grouped by each tag entered here. If a link can belong to more than one group, it will belong to the first match. Any tags not belonging to a configured group will be grouped together at the end of the tile.
+                    </p>
+                    <p>
+                        You may also use the dollar sign ($) to access special functions/variables in group definitions:
+                    </p>
+                    <p>
+                        <code>$$</code> - A literal "$"
+                        <br>
+                        <code>$(tag1 tag2 tag3)</code> - Form a group with multiple space-delimited tags. The captured links must belong to all tags in the list.
+                        <br>
+                        <code>$named(title tag)</code> - Create a group with a title. Accepts a title and a tag seperated by a space. You can nest other functions inside of this, if you want spaces in your title use <code>$()</code>.
+                        <br>
+                        <code>$ungrouped</code> - A reference to the ungrouped links, you can use this to create a named grouped with them or choose what order they appear in.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <button class="modal-close is-large" 
+        _="on click send click to the previous .modal-background"></button>
+</div>
+
+<div 
+    id="tile-configuration-list"
+    class="is-flex is-flex-direction-column gap-1 mb-6 sortable"
+    _="
+    on load
+        js(me)
+        return new Sortable(me, { animation: 100, ghostClass: 'sortable-ghost', handle: '.tile-configuration-handle'});
+        end
+        set :sortable to it
+    end
+
+    on htmx:beforeCleanupElement
+        set sortable to :sortable
+        js(sortable)
+            sortable.destroy()
+        end
+    end">
+    {% for i in '12345' %}
+    {% include "tile_configuration.html" %}
+    {% endfor %}
+</div>
+{% endblock %}
