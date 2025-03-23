@@ -114,3 +114,12 @@
         text-decoration: none !important;
     }
 }
+
+.message-footer {
+    background-color: var(--bulma-background);
+    border-end-end-radius: var(--bulma-message-header-radius);
+    border-end-start-radius: var(--bulma-message-header-radius);
+    font-weight: var(--bulma-message-header-weight);
+    padding-bottom: 1.25em;
+    position: relative;
+}

@@ -67,11 +67,11 @@
         end
     "></div>
     <div class="modal-content">
-        <div class="message is-dark">
+        <div class="message is-dark is-flex is-flex-direction-column" style="max-height:calc(100vh - var(--bulma-modal-card-spacing));">
             <div class="message-header">
                 Help
             </div>
-            <div class="message-body">
+            <div class="message-body is-radiusless" style="overflow:auto;">
                 <div class="content">
                     <p>
                         Welcome to the tiles configuration! Each tile in this list represents one tile on the homepage. You may drag and drop these tiles to change their order. Don't forget to save once you're done making edits.
@@ -114,6 +114,7 @@
                     </p>
                 </div>
             </div>
+            <div class="message-footer"></div>
         </div>
     </div>
     <button class="modal-close is-large" 
