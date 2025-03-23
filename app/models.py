@@ -1,5 +1,6 @@
 from flask_login import UserMixin
-from pydantic import BaseModel, RootModel
+from lark import UnexpectedCharacters, UnexpectedToken
+from pydantic import BaseModel, RootModel, field_validator
 
 from .group_parser import validate
 
@@ -25,26 +26,26 @@ class ExtendedThinUser(BaseModel):
 
 class TileConfiguration(BaseModel):
     title: str | None = None
-    tags: list[str] = []
-    groups: str | None = None
-    limit: int = 100
-
-class TileConfigurationRequest(BaseModel):
-    title: str | None = None
     tags: str | None = None
     groups: str | None = None
     limit: int = 100
 
-    def parse(self) -> TileConfiguration:
-        tags = []
-        if self.tags is not None and len(self.tags) > 0:
-            tags = [i for i in self.tags.split() if i]
+    @field_validator("tags")
+    @classmethod
+    def clean_tags(cls, value):
+        return " ".join(value.split()) if value else None
 
-        return TileConfiguration(
-            title = self.title,
-            tags = tags,
-            groups = validate(self.groups) if self.groups else None,
-            limit = self.limit)
+    @field_validator("groups")
+    @classmethod
+    def validate_groups(cls, value):
+        if value is None:
+            return None
+        try:
+            return validate(value)
+        except UnexpectedCharacters as e:
+            raise ValueError(f"Unexpected character '{e.char}' at position {e.column}") from e
+        except UnexpectedToken as e:
+            raise ValueError(f"Unexpected token '{e.token}' at position {e.column}") from e
 
 class TileConfigurationList(RootModel):
     root: list[TileConfiguration]
@@ -57,4 +58,5 @@ class LinkdingResponse(BaseModel):
     results: list[LinkdingBookmark]
 
 class TilesSettingsRequest(BaseModel):
-    tiles: list[TileConfigurationRequest]
+    tiles: list[TileConfiguration]
+

@@ -140,7 +140,7 @@
     {% for tile in tiles %}
     {% with %}
         {% set title = tile.title %}
-        {% set tags = ' '.join(tile.tags) %}
+        {% set tags = tile.tags %}
         {% set limit = tile.limit %}
         {% set groups = tile.groups %}
         {% include "tile_configuration.html" %}

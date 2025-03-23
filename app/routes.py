@@ -16,11 +16,11 @@ def add_routes(app):
         bp = Blueprint('bp', __name__, url_prefix=configuration.context_path)
         app.config['APPLICATION_ROOT'] = configuration.context_path
 
-
     @bp.route('/', methods=['GET'])
     @login_required
     def home():
-        return render_template('home.html', user='Noah')
+        tiles = get_tiles_configuration(current_user.get_id())
+        return render_template('home.html', tiles=tiles)
 
     @bp.route('logout', methods=['GET'])
     def logout():
@@ -124,11 +124,7 @@ def add_routes(app):
             deserialized = TilesSettingsRequest.model_validate_json(data)
         except ValidationError as e:
             return render_template('tiles_settings_result.html',  validation_errors=e.errors())
-        success, errors, converted = linktiles_user.try_parse_tile_configurations(deserialized.tiles)
-        if not success:
-            return render_template('tiles_settings_result.html',  errors=errors)
-
-        update_tiles_configuration(current_user.get_id(), converted)
+        update_tiles_configuration(current_user.get_id(), deserialized.tiles)
         return render_template('tiles_settings_result.html',  success=True)
 
     @bp.route('settings/general', methods=['GET'])
@@ -161,6 +157,7 @@ def add_routes(app):
 
         message = 'Successfully connected to the linkding API.'
         return render_template('linkding_integration_settings_result.html', success=True, message=message)
+
 
     app.register_blueprint(bp)
 
