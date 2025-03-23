@@ -2,7 +2,7 @@ import requests
 
 from . import linkding
 from .grouper_transformer import create_grouper
-from .models import Tile, TileConfiguration, TileGroup, TilesOptions
+from .models import LinkTilesConfigurationExport, Tile, TileConfiguration, TileConfigurationList, TileGroup, TilesOptions
 from .storage import storage
 
 def update_tiles_configuration(user_id: str, tiles: list[TileConfiguration]) -> None:
@@ -10,6 +10,10 @@ def update_tiles_configuration(user_id: str, tiles: list[TileConfiguration]) -> 
 
 def get_tiles_configuration(user_id: str) -> list[TileConfiguration]:
     return storage.get_tiles(user_id) or []
+
+def export_tiles_configuration(user_id: str) -> LinkTilesConfigurationExport:
+    tiles = storage.get_tiles(user_id) or []
+    return LinkTilesConfigurationExport(tiles=tiles)
 
 def get_tiles_options(user_id: str) -> TilesOptions:
     return storage.get_tiles_options(user_id)

@@ -1,9 +1,9 @@
-from flask import Blueprint, Response, redirect, render_template, request, url_for
+from flask import Blueprint, Response, make_response, redirect, render_template, request, url_for
 import random
 from pydantic import ValidationError
 
 from .models import TileColors, TileConfiguration, TileFill, TileGroupLayout, TileLayout, TileTitleLocation, TilesSettingsRequest
-from .tiles import create_tile, get_tiles_configuration, get_tiles_options, update_tiles_configuration, update_tiles_options
+from .tiles import create_tile, export_tiles_configuration, get_tiles_configuration, get_tiles_options, update_tiles_configuration, update_tiles_options
 from .authentication import login_user, login_required, logout_user, login_manager, register_user, verify_password, current_user
 from .authentication import change_password as change_user_password
 from .configuration import configuration
@@ -221,6 +221,13 @@ def add_routes(app):
         message = 'Successfully connected to the linkding API.'
         return render_template('linkding_integration_settings_result.html', success=True, message=message)
 
+    @bp.route('settings/tiles/download')
+    def download_tiles_configuration():
+        configuration = export_tiles_configuration(current_user.get_id())
+        response = make_response(configuration.model_dump_json())
+        response.headers["Content-Type"] = "application/json"
+        response.headers["Content-Disposition"] = "attachment; filename=linktiles.json"
+        return response
 
     app.register_blueprint(bp)
 

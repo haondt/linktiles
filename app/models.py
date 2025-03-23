@@ -53,6 +53,9 @@ class TileConfiguration(BaseModel):
 class TileConfigurationList(RootModel):
     root: list[TileConfiguration]
 
+class LinkTilesConfigurationExport(BaseModel):
+    tiles: list[TileConfiguration]
+
 class LinkdingBookmark(BaseModel):
     title: str
     url: str
