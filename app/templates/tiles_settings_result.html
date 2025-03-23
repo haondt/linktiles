@@ -1,6 +1,10 @@
 <div id="tiles-settings-result" class="mb-4" hx-swap-oob="true">
-{% if error %}
-{{ error }}
+{% if errors %}
+<div class="control">
+{% for error in errors %}
+<p class="has-text-danger">{{ error }}</p>
+</div>
+{% endfor %}
 {% endif %}
 
 {% if success %}

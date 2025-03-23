@@ -96,16 +96,21 @@
                         Similar to the <strong>Tags</strong> field, you may enter any number of space-delimited tags here. Within the tile, links will be grouped by each tag entered here. If a link can belong to more than one group, it will belong to the first match. Any tags not belonging to a configured group will be grouped together at the end of the tile.
                     </p>
                     <p>
-                        You may also use the dollar sign ($) to access special functions/variables in group definitions:
+                    You may also use the dollar sign ($) to access special functions/variables in group definitions. To insert a tag with a $ in it, you must escape it with a backslash (\). The following characters must also be escaped to use them as part of a tag:<code>\</code>, <code>(</code>, <code>)</code>.
                     </p>
                     <p>
-                        <code>$$</code> - A literal "$"
+                        <strong>The special functions are as follows:</strong>
                         <br>
-                        <code>$(tag1 tag2 tag3)</code> - Form a group with multiple space-delimited tags. The captured links must belong to all tags in the list.
+                        <code>$all(tag1 tag2 tag3)</code> - Form a group with multiple space-delimited tags. The captured links must belong to all tags in the list.
                         <br>
-                        <code>$named(title tag)</code> - Create a group with a title. Accepts a title and a tag seperated by a space. You can nest other functions inside of this, if you want spaces in your title use <code>$()</code>.
+                        <code>$any(tag1 tag2 tag3)</code> - Form a group with multiple space-delimited tags where the captured links must belong to at least one of the tags in the list.
+                        <br>
+                        <code>$named(title tag)</code> - Create a group with a title. Accepts a title and a tag seperated by a space. If you want to include a space in the title, you can escape the space with a backslash.
                         <br>
                         <code>$ungrouped</code> - A reference to the ungrouped links, you can use this to create a named grouped with them or choose what order they appear in.
+                        <br>
+                        <br>
+                        Functions can also be nested within each other, for example: <code>$named(1\ to\ 3 $any(tag1 tag2 tag3))</code>
                     </p>
                 </div>
             </div>
@@ -135,6 +140,9 @@
     {% for tile in tiles %}
     {% with %}
         {% set title = tile.title %}
+        {% set tags = ' '.join(tile.tags) %}
+        {% set limit = tile.limit %}
+        {% set groups = tile.groups %}
         {% include "tile_configuration.html" %}
     {% endwith %}
     {% endfor %}

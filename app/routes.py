@@ -124,7 +124,11 @@ def add_routes(app):
             deserialized = TilesSettingsRequest.model_validate_json(data)
         except ValidationError as e:
             return render_template('tiles_settings_result.html',  validation_errors=e.errors())
-        update_tiles_configuration(current_user.get_id(), deserialized.tiles)
+        success, errors, converted = linktiles_user.try_parse_tile_configurations(deserialized.tiles)
+        if not success:
+            return render_template('tiles_settings_result.html',  errors=errors)
+
+        update_tiles_configuration(current_user.get_id(), converted)
         return render_template('tiles_settings_result.html',  success=True)
 
     @bp.route('settings/general', methods=['GET'])
