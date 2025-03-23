@@ -2,8 +2,8 @@ from flask import Blueprint, Response, redirect, render_template, request, url_f
 import random
 from pydantic import ValidationError
 
-from .models import TileColors, TileFill, TileGroupLayout, TileLayout, TileTitleLocation, TilesSettingsRequest
-from .tiles import get_tiles_configuration, get_tiles_options, update_tiles_configuration, update_tiles_options
+from .models import TileColors, TileConfiguration, TileFill, TileGroupLayout, TileLayout, TileTitleLocation, TilesSettingsRequest
+from .tiles import create_tile, get_tiles_configuration, get_tiles_options, update_tiles_configuration, update_tiles_options
 from .authentication import login_user, login_required, logout_user, login_manager, register_user, verify_password, current_user
 from .authentication import change_password as change_user_password
 from .configuration import configuration
@@ -124,7 +124,24 @@ def add_routes(app):
     @bp.route('fragments/tile', methods=['GET'])
     @login_required
     def tile_fragment():
-        return render_template("tile.html")
+        title = request.args.get('title', '')
+        tags = request.args.get('tags', '')
+        limit = request.args.get('limit', 100)
+        group = request.args.get('group', '')
+        title = title.strip() if len(title.strip()) > 0 else None
+        limit = int(limit)
+        group = group.strip() if len(group.strip()) > 0 else None
+        config = TileConfiguration(
+            title=request.args.get('title'),
+            tags=request.args.get('tags'),
+            groups=request.args.get('groups'),
+            limit=int(request.args.get('limit', 100)))
+
+        user_id = current_user.get_id()
+        tile = create_tile(user_id, config)
+        if isinstance(tile, str):
+            return render_template("tile.html", error=tile)
+        return render_template("tile.html", tile=tile)
 
     @bp.route('settings', methods=['GET'])
     @login_required

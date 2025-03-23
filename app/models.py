@@ -4,7 +4,7 @@ from flask_login import UserMixin
 from lark import UnexpectedCharacters, UnexpectedToken
 from pydantic import BaseModel, Field, RootModel, field_validator
 
-from .group_parser import validate
+from .pretty_print_transformer import pretty_print
 
 class User(UserMixin):
     def __init__(self, id):
@@ -44,7 +44,7 @@ class TileConfiguration(BaseModel):
         if value is None:
             return None
         try:
-            return validate(value)
+            return pretty_print(value)
         except UnexpectedCharacters as e:
             raise ValueError(f"Unexpected character '{e.char}' at position {e.column}") from e
         except UnexpectedToken as e:
@@ -56,9 +56,14 @@ class TileConfigurationList(RootModel):
 class LinkdingBookmark(BaseModel):
     title: str
     url: str
+    tag_names: list[str]
+
+    def as_link(self):
+        return Link(name=self.title.strip(), location=self.url)
 
 class LinkdingResponse(BaseModel):
     results: list[LinkdingBookmark]
+
 
 class TilesSettingsRequest(BaseModel):
     tiles: list[TileConfiguration]
@@ -97,3 +102,18 @@ class TilesOptions(BaseModel):
     layout: TileLayout = TileLayout.MASONRY
     width: int = 300
     group_layout: TileGroupLayout = TileGroupLayout.DEFAULT
+
+class Link(BaseModel):
+    name: str
+    location: str
+
+class TileGroup(BaseModel):
+    title: str | None
+    links: list[Link]
+
+class Tile(BaseModel):
+    title: str | None
+    groups: list[TileGroup]
+
+
+

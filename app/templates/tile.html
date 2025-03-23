@@ -1,9 +1,13 @@
+{% if error %}
+<div class="tile notification is-danger" style="width:100%;">
+    {{ error }}
+</div>
+{% else %}
 <div class="tile notification is-primary" style="width:100%;">
     <div class="is-flex is-flex-direction-row is-flex-wrap-wrap gap-2">
-        {% for i in range(10) %}
         <a class="tile-link has-text-weight-semibold">
-            vault
+            {{ tile }}
         </a>
-        {% endfor %}
     </div>
 </div>
+{% endif %}

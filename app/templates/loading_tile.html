@@ -1,10 +1,11 @@
-<div 
+<form 
     hx-trigger="load"
     hx-get="{{ url_for('bp.tile_fragment') }}"
     hx-swap="outerHTML"
     class="button is-static is-loading" style="width:100%;height:{{ height }}px;">
+    <input name="seed" type="hidden" value="{{ seed or 0 }}">
     <input name="title" type="hidden" value="{{ title or '' }}">
     <input name="tags" type="hidden" value="{{ tags or '' }}"> 
     <input name="limit" type="hidden" value="{{ limit }}">
     <input name="groups" type="hidden" value="{{ groups or '' }}">
-</div>
+</form>
