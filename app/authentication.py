@@ -23,7 +23,6 @@ def load_user(username):
     return storage.get_user(username)
 
 class CustomSessionInterface(SecureCookieSessionInterface):
-    """Prevent creating session from API requests."""
     def save_session(self, *args, **kwargs):
         if configuration.enable_auth_proxy:
             return

@@ -1,6 +1,8 @@
+from enum import Enum
+import random
 from flask_login import UserMixin
 from lark import UnexpectedCharacters, UnexpectedToken
-from pydantic import BaseModel, RootModel, field_validator
+from pydantic import BaseModel, Field, RootModel, field_validator
 
 from .group_parser import validate
 
@@ -25,6 +27,7 @@ class ExtendedThinUser(BaseModel):
     data: UserData
 
 class TileConfiguration(BaseModel):
+    seed: float = Field(default_factory=lambda: random.uniform(0, 1))
     title: str | None = None
     tags: str | None = None
     groups: str | None = None
@@ -60,3 +63,37 @@ class LinkdingResponse(BaseModel):
 class TilesSettingsRequest(BaseModel):
     tiles: list[TileConfiguration]
 
+
+class TileColors(str, Enum):
+    RANDOM = "Random"
+    REALLY_RANDOM = "Really random"
+    DARK = "Dark"
+    DARKER = "Darker"
+    BRIGHTER = "Brighter"
+    BRIGHT = "Bright"
+
+class TileFill(str, Enum):
+    FILL = "Fill"
+    OUTLINE = "Outline"
+
+class TileTitleLocation(str, Enum):
+    INSIDE = "Inside"
+    OUTSIDE = "Outside"
+
+class TileLayout(str, Enum):
+    MASONRY = "Masonry"
+    GRID = "Grid"
+    LIST = "List"
+
+class TileGroupLayout(str, Enum):
+    DEFAULT = "Default"
+    LOOSE = "Loose"
+    LIST = "List"
+
+class TilesOptions(BaseModel):
+    colors: TileColors = TileColors.RANDOM
+    fill: TileFill = TileFill.FILL
+    title_location: TileTitleLocation = TileTitleLocation.OUTSIDE
+    layout: TileLayout = TileLayout.MASONRY
+    width: int = 300
+    group_layout: TileGroupLayout = TileGroupLayout.DEFAULT

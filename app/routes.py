@@ -1,8 +1,9 @@
 from flask import Blueprint, Response, redirect, render_template, request, url_for
+import random
 from pydantic import ValidationError
 
-from .models import TilesSettingsRequest
-from .tiles import get_tiles_configuration, update_tiles_configuration
+from .models import TileColors, TileFill, TileGroupLayout, TileLayout, TileTitleLocation, TilesSettingsRequest
+from .tiles import get_tiles_configuration, get_tiles_options, update_tiles_configuration, update_tiles_options
 from .authentication import login_user, login_required, logout_user, login_manager, register_user, verify_password, current_user
 from .authentication import change_password as change_user_password
 from .configuration import configuration
@@ -15,6 +16,18 @@ def add_routes(app):
     if configuration.context_path is not None:
         bp = Blueprint('bp', __name__, url_prefix=configuration.context_path)
         app.config['APPLICATION_ROOT'] = configuration.context_path
+
+    @app.template_global()
+    def randint(lower, upper):
+        return random.randint(lower, upper)
+
+    app.jinja_env.globals['types'] = {
+        TileColors.__name__: TileColors,
+        TileFill.__name__: TileFill,
+        TileTitleLocation.__name__: TileTitleLocation,
+        TileLayout.__name__: TileLayout,
+        TileGroupLayout.__name__: TileGroupLayout
+    }
 
     @bp.route('/', methods=['GET'])
     @login_required
@@ -106,7 +119,12 @@ def add_routes(app):
     @bp.route('fragments/tile_configuration', methods=['GET'])
     @login_required
     def tile_configuration_fragment():
-        return render_template('tile_configuration.html')
+        return render_template('tile_configuration.html', seed=random.uniform(0, 1))
+
+    @bp.route('fragments/tile', methods=['GET'])
+    @login_required
+    def tile_fragment():
+        return render_template("tile.html")
 
     @bp.route('settings', methods=['GET'])
     @login_required
@@ -127,10 +145,38 @@ def add_routes(app):
         update_tiles_configuration(current_user.get_id(), deserialized.tiles)
         return render_template('tiles_settings_result.html',  success=True)
 
-    @bp.route('settings/general', methods=['GET'])
+    @bp.route('settings/general', methods=['GET', 'POST'])
     @login_required
     def general_settings():
-        return render_template('general_settings.html')
+        user_id = current_user.get_id()
+        tiles_options = get_tiles_options(user_id)
+        if request.method == 'GET':
+            return render_template('general_settings.html', tiles_options=tiles_options)
+
+        dirty = False
+        if 'tile_colors' in request.form:
+            tiles_options.colors = TileColors(request.form['tile_colors'])
+            dirty = True
+        if 'tile_fill' in request.form:
+            tiles_options.fill = TileFill(request.form['tile_fill'])
+            dirty = True
+        if 'tile_title_location' in request.form:
+            tiles_options.title_location = TileTitleLocation(request.form['tile_title_location'])
+            dirty = True
+        if 'tile_layout' in request.form:
+            tiles_options.layout = TileLayout(request.form['tile_layout'])
+            dirty = True
+        if 'tile_width' in request.form:
+            tiles_options.width = int(request.form['tile_width'])
+            dirty = True
+        if 'tile_group_layout' in request.form:
+            tiles_options.group_layout = TileGroupLayout(request.form['tile_group_layout'])
+            dirty = True
+
+        if dirty:
+            update_tiles_options(user_id, tiles_options)
+
+        return ''
 
     @bp.route('settings/integrations', methods=['GET'])
     @login_required

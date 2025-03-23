@@ -1,5 +1,5 @@
 from flask_login import confirm_login
-from .models import ExtendedThinUser, ThinUser, TileConfiguration, TileConfigurationList, User, UserData
+from .models import ExtendedThinUser, ThinUser, TileConfiguration, TileConfigurationList, TilesOptions, User, UserData
 import redis
 from .configuration import configuration
 
@@ -11,6 +11,7 @@ class MemoryStorage():
         self.users: dict[str, User] = {}
         self.user_data: dict[str, UserData] = {}
         self.tiles: dict[str, list[TileConfiguration]] = {}
+        self.tiles_options: dict[str, TilesOptions] = {}
 
     def get_user(self, username) -> User | None:
         id = convert_username_to_id(username)
@@ -56,6 +57,15 @@ class MemoryStorage():
     def get_tiles(self, user_id: str) -> list[TileConfiguration] | None:
         return self.tiles.get(user_id, None)
 
+    def upsert_tiles_options(self, user_id: str, tiles_options: TilesOptions) -> None:
+        self.tiles_options[user_id] = tiles_options
+
+    def get_tiles_options(self, user_id: str) -> TilesOptions:
+        result = self.tiles_options.get(user_id)
+        if result:
+            return result
+        return TilesOptions()
+
 class RedisStorage():
     def __init__(self):
         assert configuration.db_port is not None
@@ -66,6 +76,7 @@ class RedisStorage():
             decode_responses=True)
         self.user_prefix = 'user'
         self.tiles_prefix = 'tiles:tiles'
+        self.tiles_options_prefix = 'tiles:options'
 
     def deserialize_user(self, id: str, data: str) -> tuple[User, UserData]:
         user =  ExtendedThinUser.model_validate_json(data)
@@ -108,6 +119,13 @@ class RedisStorage():
     def get_tiles(self, user_id: str) -> list[TileConfiguration] | None:
         result = self.client.get(f'{self.tiles_prefix}:{user_id}')
         return TileConfigurationList.model_validate_json(str(result)).root if result else None
+
+    def upsert_tiles_options(self, user_id: str, tiles_options: TilesOptions) -> None:
+        assert self.client.set(f'{self.tiles_options_prefix}:{user_id}', tiles_options.model_dump_json())
+
+    def get_tiles_options(self, user_id: str) -> TilesOptions:
+        result = self.client.get(f'{self.tiles_options_prefix}:{user_id}')
+        return TilesOptions.model_validate_json(str(result)) if result else TilesOptions()
 
 
 if configuration.db_engine == 'redis':

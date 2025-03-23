@@ -1,18 +1,10 @@
-<!-- placeholder/poc -->
-{% macro masonry_child(w, h, body, color ) %}
-<div class="masonry-child">
-    <div class="notification {{ color }}" style="width:100%;height:{{ h }}px;">
-        {{ body }}
-    </div>
-</div>
-{% endmacro %}
-
 <div class="masonry-container" 
     _="
     on load[event.target==me]
         js(me)
             return new MiniMasonry({
-                container: me
+                container: me,
+                surroundingGutter: false
             });
         end
         set :mm to it
@@ -24,27 +16,18 @@
             mm.destroy()
         end
     end">
-{{ masonry_child(200, 100, '1', 'has-background-black-ter') }}
-{{ masonry_child(200, 200, '2', 'is-primary') }}
-{{ masonry_child(200, 150, '3', 'has-background-black-ter') }}
-{{ masonry_child(200, 75, '4', 'is-info') }}
-{{ masonry_child(200, 200, '5', 'is-primary') }}
-{{ masonry_child(200, 90, '6', 'has-background-black-ter') }}
-{{ masonry_child(200, 180, '7', 'has-background-black-ter') }}
-{{ masonry_child(200, 110, '8', 'is-info') }}
-{{ masonry_child(200, 60, '9', 'is-primary') }}
-{{ masonry_child(200, 140, '10', 'has-background-black-ter') }}
-{{ masonry_child(200, 70, '11', 'has-background-black-ter') }}
-{{ masonry_child(200, 190, '12', 'is-info') }}
-{{ masonry_child(200, 85, '13', 'has-background-black-ter') }}
-{{ masonry_child(200, 130, '14', 'is-primary') }}
-{{ masonry_child(200, 170, '15', 'has-background-black-ter') }}
-{{ masonry_child(200, 95, '16', 'is-info') }}
-{{ masonry_child(200, 200, '17', 'has-background-black-ter') }}
-{{ masonry_child(200, 50, '18', 'is-primary') }}
-{{ masonry_child(200, 120, '19', 'has-background-black-ter') }}
-{{ masonry_child(200, 180, '20', 'has-background-black-ter') }}
 
-
+    {% for tile in tiles %}
+    <div class="masonry-child">
+        {% with %}
+        {% set height=randint(50, 250) %}
+        {% set title = tile.title %}
+        {% set tags = tile.tags %}
+        {% set limit = tile.limit %}
+        {% set groups = tile.groups %}
+        {% include "loading_tile.html" %}
+        {% endwith %}
+    </div>
+    {% endfor %}
 </div>
 

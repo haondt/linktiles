@@ -7,6 +7,10 @@
         </button>
     </div>
 
+    {% if seed %}
+    <input class="input" name="seed" type="hidden" value="{{ seed }}">
+    {% endif %}
+
     <div class="tile-configuration-body">
         <div class="field is-horizontal">
             <div class="field-label is-normal">

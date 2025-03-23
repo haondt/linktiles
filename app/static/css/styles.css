@@ -105,6 +105,12 @@
     font-size: var(--bulma-small-font-size);
 }
 
-  .footer {
-      --bulma-footer-background-color: var(--bulma-body-background-color);
-  }
+.footer {
+  --bulma-footer-background-color: var(--bulma-body-background-color);
+}
+
+.tile {
+    .tile-link {
+        text-decoration: none !important;
+    }
+}
