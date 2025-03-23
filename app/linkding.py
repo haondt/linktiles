@@ -21,7 +21,7 @@ def query(url: str, api_key: str, tags: list[str] = [], limit: int = 100) -> Lin
     
     params = {"limit": str(limit)}
     if tags and len(tags) > 0:
-        tag_query = " ".join(tags)
+        tag_query = " ".join([f"#{t}" for t in tags])
         params["q"] = tag_query
     
     try:

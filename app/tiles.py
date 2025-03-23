@@ -76,5 +76,6 @@ def create_tile(user_id: str, prototype: TileConfiguration) -> Tile | str:
 
     return Tile(
         title=title,
-        groups=groups
+        groups=groups,
+        seed=prototype.seed
     )

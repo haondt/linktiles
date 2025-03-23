@@ -1,10 +1,26 @@
+{% macro loading_tile(tile) %}
+    {% with %}
+    {% set height=randint(50, 250) %}
+    {% set title = tile.title %}
+    {% set tags = tile.tags %}
+    {% set limit = tile.limit %}
+    {% set seed = tile.seed %}
+    {% set groups = tile.groups %}
+    {% include "loading_tile.html" %}
+    {% endwith %}
+{% endmacro %}
+
+{% if options.layout == types.TileLayout.MASONRY %}
 <div class="masonry-container" 
     _="
     on load[event.target==me]
         js(me)
             return new MiniMasonry({
                 container: me,
-                surroundingGutter: false
+                surroundingGutter: false,
+                gutter: 15,
+                ultimateGutter: 15,
+                baseWidth: {{ options.width }}
             });
         end
         set :mm to it
@@ -15,19 +31,44 @@
         js(mm)
             mm.destroy()
         end
-    end">
+    end
+
+    on htmx:afterSwap
+        set mm to :mm
+        js(mm)
+            mm.layout()
+        end
+    end
+    ">
 
     {% for tile in tiles %}
     <div class="masonry-child">
-        {% with %}
-        {% set height=randint(50, 250) %}
-        {% set title = tile.title %}
-        {% set tags = tile.tags %}
-        {% set limit = tile.limit %}
-        {% set groups = tile.groups %}
-        {% include "loading_tile.html" %}
-        {% endwith %}
+        {{ loading_tile(tile) }}
     </div>
     {% endfor %}
 </div>
 
+{% elif options.layout == types.TileLayout.GRID %}
+<div class="grid">
+    <style>
+        .grid {
+            --bulma-grid-column-min: {{ options.width }}px;
+            gap: 15px !important;
+        }
+    </style>
+    {% for tile in tiles %}
+    <div class="cell">
+        {{ loading_tile(tile) }}
+    </div>
+    {% endfor %}
+</div>
+
+{% elif options.layout == types.TileLayout.LIST %}
+<div class="is-flex is-flex-direction-column is-align-items-center" style="gap:15px;">
+    {% for tile in tiles %}
+    <div style="width:100%;max-width:{{ options.width }}px;">
+        {{ loading_tile(tile) }}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}

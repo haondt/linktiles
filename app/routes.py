@@ -21,6 +21,19 @@ def add_routes(app):
     def randint(lower, upper):
         return random.randint(lower, upper)
 
+    @app.template_global()
+    def randseed():
+        return random.random()
+
+    @app.template_global()
+    def proportional_select(value: float, values: list, distribution: list):
+        s = 0
+        for i, proportion in enumerate(distribution):
+            s += proportion
+            if value <= s:
+                return values[i]
+        return values[-1]
+
     app.jinja_env.globals['types'] = {
         TileColors.__name__: TileColors,
         TileFill.__name__: TileFill,
@@ -32,8 +45,10 @@ def add_routes(app):
     @bp.route('/', methods=['GET'])
     @login_required
     def home():
-        tiles = get_tiles_configuration(current_user.get_id())
-        return render_template('home.html', tiles=tiles)
+        user_id = current_user.get_id()
+        tiles = get_tiles_configuration(user_id)
+        tiles_options = get_tiles_options(user_id)
+        return render_template('home.html', tiles=tiles, options=tiles_options)
 
     @bp.route('logout', methods=['GET'])
     def logout():
@@ -119,19 +134,13 @@ def add_routes(app):
     @bp.route('fragments/tile_configuration', methods=['GET'])
     @login_required
     def tile_configuration_fragment():
-        return render_template('tile_configuration.html', seed=random.uniform(0, 1))
+        return render_template('tile_configuration.html', seed=random.random())
 
     @bp.route('fragments/tile', methods=['GET'])
     @login_required
     def tile_fragment():
-        title = request.args.get('title', '')
-        tags = request.args.get('tags', '')
-        limit = request.args.get('limit', 100)
-        group = request.args.get('group', '')
-        title = title.strip() if len(title.strip()) > 0 else None
-        limit = int(limit)
-        group = group.strip() if len(group.strip()) > 0 else None
         config = TileConfiguration(
+            seed=float(request.args.get('seed', 0)),
             title=request.args.get('title'),
             tags=request.args.get('tags'),
             groups=request.args.get('groups'),
@@ -141,7 +150,8 @@ def add_routes(app):
         tile = create_tile(user_id, config)
         if isinstance(tile, str):
             return render_template("tile.html", error=tile)
-        return render_template("tile.html", tile=tile)
+        tiles_options = get_tiles_options(user_id)
+        return render_template("tile.html", tile=tile, options=tiles_options)
 
     @bp.route('settings', methods=['GET'])
     @login_required

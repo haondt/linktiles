@@ -1,13 +1,91 @@
 {% if error %}
-<div class="tile notification is-danger" style="width:100%;">
+<div class="tile is-danger">
     {{ error }}
 </div>
 {% else %}
-<div class="tile notification is-primary" style="width:100%;">
-    <div class="is-flex is-flex-direction-row is-flex-wrap-wrap gap-2">
-        <a class="tile-link has-text-weight-semibold">
-            {{ tile }}
-        </a>
+
+{% set color_class = '' %}
+{% set color_classes = ['is-dark', 'is-bright', 'is-bright-alt'] %}
+{% if options.colors == types.TileColors.RANDOM %}
+    {% set color_class = proportional_select(tile.seed, color_classes, [0.5, 0.25, 0.25]) %}
+{% elif options.colors == types.TileColors.REALLY_RANDOM %}
+    {% set color_class = proportional_select(randseed(), color_classes, [0.5, 0.25, 0.25]) %}
+{% elif options.colors == types.TileColors.DARK %}
+    {% set color_class = 'has-background-black-ter' %}
+{% elif options.colors == types.TileColors.DARKER %}
+    {% set color_class = proportional_select(tile.seed, color_classes, [0.8, 0.1, 0.1]) %}
+{% elif options.colors == types.TileColors.BRIGHT %}
+    {% set color_class = proportional_select(tile.seed, color_classes, [0.0, 0.5, 0.5]) %}
+{% elif options.colors == types.TileColors.BRIGHTER %}
+    {% set color_class = proportional_select(tile.seed, color_classes, [0.25, 0.375, 0.375]) %}
+{% endif %}
+
+{% set fill_class='' %}
+{% if options.fill == types.TileFill.OUTLINE %}
+    {% set fill_class = "is-outlined" %}
+{% endif %}
+
+
+
+
+<div class="tile">
+    {% if options.title_location == types.TileTitleLocation.OUTSIDE and tile.title %}
+    <p class="tile-title">{{ tile.title }}</p>
+    {% endif %}
+    <div class="tile-body {{ color_class }} {{ fill_class }}">
+        {% if options.title_location == types.TileTitleLocation.INSIDE and tile.title %}
+        <p class="tile-title {% if options.fill != types.TileFill.OUTLINE %}is-inverted{% endif %}">
+            {{ tile.title }}
+        </p>
+        {% endif %}
+        <div class="is-flex is-flex-direction-column gap-2">
+            {% for group in tile.groups %}
+            <div class="group">
+                {% if group.title %}
+                <p class="group-title {% if options.fill != types.TileFill.OUTLINE %}is-inverted{% endif %}">{{ group.title }}</p>
+                {% endif %}
+
+                {% if options.group_layout == types.TileGroupLayout.DEFAULT %}
+                <div class="is-flex is-flex-direction-row is-flex-wrap-wrap is-column-gap-1">
+                    {% for link in group.links %}
+                    <a class="tile-link has-text-weight-semibold" href="{{ link.location }}">
+                        {{ link.name }}
+                    </a>
+                    {% endfor %}
+                </div>
+
+                {% elif options.group_layout == types.TileGroupLayout.LIST %}
+                <div class="is-flex is-flex-direction-column">
+                    {% for link in group.links %}
+                    <a class="tile-link has-text-weight-semibold" href="{{ link.location }}">
+                        {{ link.name }}
+                    </a>
+                    {% endfor %}
+                </div>
+
+                {% elif options.group_layout == types.TileGroupLayout.LOOSE %}
+                <div class="is-flex is-flex-direction-row is-flex-wrap-wrap is-column-gap-2">
+                    {% for link in group.links %}
+                    <a class="tile-link has-text-weight-semibold" href="{{ link.location }}">
+                        {{ link.name }}
+                    </a>
+                    {% endfor %}
+                </div>
+
+                {% elif options.group_layout == types.TileGroupLayout.COLUMNS %}
+                <div class="grid is-col-min-0 is-row-gap-0">
+                    {% for link in group.links %}
+                    <div class="cell">
+                        <a class="tile-link has-text-weight-semibold" href="{{ link.location }}">
+                            {{ link.name }}
+                        </a>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
     </div>
 </div>
 {% endif %}

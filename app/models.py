@@ -27,7 +27,7 @@ class ExtendedThinUser(BaseModel):
     data: UserData
 
 class TileConfiguration(BaseModel):
-    seed: float = Field(default_factory=lambda: random.uniform(0, 1))
+    seed: float = Field(default_factory=lambda: random.random())
     title: str | None = None
     tags: str | None = None
     groups: str | None = None
@@ -97,6 +97,7 @@ class TileGroupLayout(str, Enum):
     DEFAULT = "Default"
     LOOSE = "Loose"
     LIST = "List"
+    COLUMNS = "Columns"
 
 class TilesOptions(BaseModel):
     colors: TileColors = TileColors.RANDOM
@@ -116,6 +117,7 @@ class TileGroup(BaseModel):
 
 class Tile(BaseModel):
     title: str | None
+    seed: float
     groups: list[TileGroup]
 
 

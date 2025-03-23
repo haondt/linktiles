@@ -27,13 +27,18 @@
 
   color-scheme: dark;
 
-  .has-border-info {
-      border: 1px solid var(--bulma-info);
-  }
+  .has-border-info { border: 1px solid var(--bulma-info); }
   .has-border-black-ter { border: 1px solid var(--bulma-black-ter); }
   .has-border-grey-darker { border: 1px solid var(--bulma-grey-darker); }
   .has-border-grey-dark { border: 1px solid var(--bulma-grey-dark); }
   .has-border-grey { border: 1px solid var(--bulma-grey); }
+
+  .has-outline-info { outline: 1px solid var(--bulma-info); }
+  .has-outline-black-ter { outline: 1px solid var(--bulma-black-ter); }
+  .has-outline-grey-darker { outline: 1px solid var(--bulma-grey-darker); }
+  .has-outline-grey-dark { outline: 1px solid var(--bulma-grey-dark); }
+  .has-outline-grey { outline: 1px solid var(--bulma-grey); }
+  .has-outline-primary { outline: 1px solid var(--bulma-primary); }
 
   .masonry-container {
       position: relative;
@@ -54,6 +59,12 @@
 .gap-6 { gap: 1.5rem; }
 .gap-7 { gap: 1.75rem; }
 .gap-8 { gap: 2rem; }
+
+
+
+.no-wrap-text {
+    white-space: nowrap;
+}
 
 .vr {
     background-color: var(--bulma-hr-background-color);
@@ -113,7 +124,92 @@
     .tile-link {
         text-decoration: none !important;
     }
+
+    --linktiles-tile-h: var(--bulma-scheme-h);
+    --linktiles-tile-s: var(--bulma-scheme-s);
+    --linktiles-tile-background-l: var(--bulma-background-l);
+    --linktiles-tile-color-l: var(--bulma-text-strong-l);
+    --linktiles-tile-code-background-color: var(--bulma-scheme-main);
+    --linktiles-tile-radius: var(--bulma-radius);
+    --linktiles-tile-padding: 1.375em 1.5em;
+
+    .tile-body {
+        background-color: hsl(var(--linktiles-tile-h), var(--linktiles-tile-s), var(--linktiles-tile-background-l));
+        border-radius: var(--linktiles-tile-radius);
+        color: hsl(var(--linktiles-tile-h), var(--linktiles-tile-s), var(--linktiles-tile-color-l));
+        padding: var(--linktiles-tile-padding);
+    }
+
+
+    a {
+        color: currentColor;
+    }
+
 }
+
+.tile.is-danger {
+    --linktiles-tile-h: var(--bulma-danger-h);
+    --linktiles-tile-s: var(--bulma-danger-s);
+    --linktiles-tile-background-l: var(--bulma-danger-l);
+    --linktiles-tile-color-l: var(--bulma-danger-invert-l);
+}
+.tile-body.is-bright {
+    --linktiles-tile-h: var(--bulma-primary-h);
+    --linktiles-tile-s: var(--bulma-primary-s);
+    --linktiles-tile-background-l: var(--bulma-primary-l);
+    --linktiles-tile-color-l: var(--bulma-primary-invert-l);
+}
+.tile-body.is-bright.is-outlined {
+    --linktiles-tile-color-l: var(--bulma-primary-light-l);
+}
+.tile-body.is-bright-alt {
+    --linktiles-tile-h: var(--bulma-info-h);
+    --linktiles-tile-s: var(--bulma-info-s);
+    --linktiles-tile-background-l: var(--bulma-info-l);
+    --linktiles-tile-color-l: var(--bulma-info-invert-l);
+}
+.tile-body.is-bright-alt.is-outlined {
+    --linktiles-tile-color-l: var(--bulma-info-light-l);
+}
+.tile-body.is-dark {
+    --linktiles-tile-h: 222;
+    --linktiles-tile-s: 14%;
+    --linktiles-tile-background-l: 14%;
+    --linktiles-tile-color-l: var(--bulma-info-invert-l);
+    color: hsl(0, 0%, 88%);
+}
+.tile-body.is-outlined {
+    background-color: #14161a;
+    outline: 1px solid hsl(var(--linktiles-tile-h), var(--linktiles-tile-s), var(--linktiles-tile-background-l));
+}
+.tile-body.is-dark.is-outlined {
+    --linktiles-tile-background-l: 44%;
+}
+
+.tile-title {
+    font-size: 1.25rem;
+    margin-bottom: 0.75rem;
+    color: var(--bulma-text-strong);
+    font-weight: var(--bulma-weight-normal);
+    line-height: 1.25;
+}
+.group-title {
+    font-size: 1rem;
+    color: var(--bulma-text);
+    font-weight: var(--bulma-weight-normal);
+    line-height: 1.25;
+}
+
+.tile-body.is-bright, .tile-body.is-bright-alt {
+    .group-title.is-inverted {
+        color: var(--bulma-grey-darker);
+    }
+    .tile-title.is-inverted {
+        color: var(--bulma-black-bis);
+    }
+}
+
+
 
 .message-footer {
     background-color: var(--bulma-background);
@@ -123,3 +219,4 @@
     padding-bottom: 1.25em;
     position: relative;
 }
+
