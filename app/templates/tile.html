@@ -25,6 +25,8 @@
 {% set fill_class='' %}
 {% if options.fill == types.TileFill.OUTLINE %}
     {% set fill_class = "is-outlined" %}
+{% elif options.fill == types.TileFill.GHOST %}
+    {% set fill_class = "is-ghost" %}
 {% endif %}
 
 
@@ -36,7 +38,7 @@
     {% endif %}
     <div class="tile-body {{ color_class }} {{ fill_class }}">
         {% if options.title_location == types.TileTitleLocation.INSIDE and tile.title %}
-        <p class="tile-title {% if options.fill != types.TileFill.OUTLINE %}is-inverted{% endif %}">
+        <p class="tile-title {% if options.fill == types.TileFill.FILL %}is-inverted{% endif %}">
             {{ tile.title }}
         </p>
         {% endif %}
@@ -44,7 +46,7 @@
             {% for group in tile.groups %}
             <div class="group">
                 {% if group.title %}
-                <p class="group-title {% if options.fill != types.TileFill.OUTLINE %}is-inverted{% endif %}">{{ group.title }}</p>
+                <p class="group-title {% if options.fill == types.TileFill.FILL %}is-inverted{% endif %}">{{ group.title }}</p>
                 {% endif %}
 
                 {% if options.group_layout == types.TileGroupLayout.DEFAULT %}

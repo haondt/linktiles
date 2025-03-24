@@ -162,6 +162,9 @@
 .tile-body.is-bright.is-outlined {
     --linktiles-tile-color-l: var(--bulma-primary-light-l);
 }
+.tile-body.is-bright.is-ghost {
+    --linktiles-tile-color-l: var(--bulma-primary-l);
+}
 .tile-body.is-bright-alt {
     --linktiles-tile-h: var(--bulma-info-h);
     --linktiles-tile-s: var(--bulma-info-s);
@@ -170,6 +173,9 @@
 }
 .tile-body.is-bright-alt.is-outlined {
     --linktiles-tile-color-l: var(--bulma-info-light-l);
+}
+.tile-body.is-bright-alt.is-ghost {
+    --linktiles-tile-color-l: var(--bulma-info-l);
 }
 .tile-body.is-dark {
     --linktiles-tile-h: 222;
@@ -181,6 +187,9 @@
 .tile-body.is-outlined {
     background-color: #14161a;
     outline: 1px solid hsl(var(--linktiles-tile-h), var(--linktiles-tile-s), var(--linktiles-tile-background-l));
+}
+.tile-body.is-ghost {
+    background-color: #14161a;
 }
 .tile-body.is-dark.is-outlined {
     --linktiles-tile-background-l: 44%;

@@ -83,6 +83,7 @@ class TileColors(str, Enum):
 class TileFill(str, Enum):
     FILL = "Fill"
     OUTLINE = "Outline"
+    GHOST = "Ghost"
 
 class TileTitleLocation(str, Enum):
     INSIDE = "Inside"
