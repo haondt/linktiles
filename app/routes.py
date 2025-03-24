@@ -2,8 +2,8 @@ from flask import Blueprint, Response, make_response, redirect, render_template,
 import random
 from pydantic import ValidationError
 
-from .models import TileColors, TileConfiguration, TileFill, TileGroupLayout, TileLayout, TileTitleLocation, TilesSettingsRequest
-from .tiles import create_tile, export_tiles_configuration, get_tiles_configuration, get_tiles_options, update_tiles_configuration, update_tiles_options
+from .models import TileColors, TileConfiguration, TileFill, TileGroupLayout, TileLayout, TileTitleLocation, TilesSettingsRequest, TimeUnit
+from .tiles import create_tile, export_tiles_configuration, get_linkding_options, get_tiles_configuration, get_tiles_options, update_linkding_options, update_tiles_configuration, update_tiles_options
 from .authentication import login_user, login_required, logout_user, login_manager, register_user, verify_password, current_user
 from .authentication import change_password as change_user_password
 from .configuration import configuration
@@ -39,7 +39,8 @@ def add_routes(app):
         TileFill.__name__: TileFill,
         TileTitleLocation.__name__: TileTitleLocation,
         TileLayout.__name__: TileLayout,
-        TileGroupLayout.__name__: TileGroupLayout
+        TileGroupLayout.__name__: TileGroupLayout,
+        TimeUnit.__name__: TimeUnit
     }
 
     @bp.route('/', methods=['GET'])
@@ -177,31 +178,46 @@ def add_routes(app):
     def general_settings():
         user_id = current_user.get_id()
         tiles_options = get_tiles_options(user_id)
+        linkding_options = get_linkding_options(user_id)
         if request.method == 'GET':
-            return render_template('general_settings.html', tiles_options=tiles_options)
+            return render_template('general_settings.html', tiles_options=tiles_options, linkding_options=linkding_options)
 
-        dirty = False
+        tiles_options_dirty = False
         if 'tile_colors' in request.form:
             tiles_options.colors = TileColors(request.form['tile_colors'])
-            dirty = True
+            tiles_options_dirty = True
         if 'tile_fill' in request.form:
             tiles_options.fill = TileFill(request.form['tile_fill'])
-            dirty = True
+            tiles_options_dirty = True
         if 'tile_title_location' in request.form:
             tiles_options.title_location = TileTitleLocation(request.form['tile_title_location'])
-            dirty = True
+            tiles_options_dirty = True
         if 'tile_layout' in request.form:
             tiles_options.layout = TileLayout(request.form['tile_layout'])
-            dirty = True
+            tiles_options_dirty = True
         if 'tile_width' in request.form:
             tiles_options.width = int(request.form['tile_width'])
-            dirty = True
+            tiles_options_dirty = True
         if 'tile_group_layout' in request.form:
             tiles_options.group_layout = TileGroupLayout(request.form['tile_group_layout'])
-            dirty = True
+            tiles_options_dirty = True
 
-        if dirty:
+        linkding_options_dirty = False
+        if 'linkding_cache_enabled' in request.form:
+            linkding_options.cache_enabled = request.form['linkding_cache_enabled'].lower() == "true"
+            linkding_options_dirty = True
+        if 'linkding_cache_duration' in request.form:
+            linkding_options.cache_duration = float(request.form['linkding_cache_duration'])
+            linkding_options_dirty = True
+        if 'linkding_cache_duration_unit' in request.form:
+            linkding_options.cache_duration_unit = TimeUnit(request.form['linkding_cache_duration_unit'])
+            linkding_options_dirty = True
+
+        if tiles_options_dirty:
             update_tiles_options(user_id, tiles_options)
+
+        if linkding_options_dirty:
+            update_linkding_options(user_id, linkding_options)
 
         return ''
 

@@ -1,8 +1,8 @@
-import requests
+import hashlib
 
 from . import linkding
 from .grouper_transformer import create_grouper
-from .models import LinkTilesConfigurationExport, Tile, TileConfiguration, TileConfigurationList, TileGroup, TilesOptions
+from .models import LinkTilesConfigurationExport, LinkdingApiConnectionData, LinkdingOptions, LinkdingResponse, Tile, TileConfiguration, TileConfigurationList, TileGroup, TilesOptions, TimeUnit, UserData
 from .storage import storage
 
 def update_tiles_configuration(user_id: str, tiles: list[TileConfiguration]) -> None:
@@ -21,6 +21,47 @@ def get_tiles_options(user_id: str) -> TilesOptions:
 def update_tiles_options(user_id: str, options: TilesOptions) -> None:
     return storage.upsert_tiles_options(user_id, options)
 
+def get_linkding_options(user_id: str) -> LinkdingOptions:
+    return storage.get_linkding_options(user_id)
+
+def update_linkding_options(user_id: str, options: LinkdingOptions) -> None:
+    return storage.upsert_linkding_options(user_id, options)
+
+
+def _get_linkding_response(user_id: str, connection_data: LinkdingApiConnectionData, prototype: TileConfiguration) -> LinkdingResponse | str:
+    linkding_options = storage.get_linkding_options(user_id)
+    if linkding_options.cache_enabled:
+        cache_key = hashlib.sha256(f"{connection_data.base_url}{connection_data.api_key}{prototype.tags}{prototype.limit}".encode()).hexdigest()
+        cached = storage.get_linkding_response(cache_key)
+        if cached:
+            return cached
+
+    tag_list = []
+    if prototype.tags is not None:
+        tag_list = [i for i in prototype.tags.strip().split() if i]
+
+    try:
+        linkding_response = linkding.query(
+            connection_data.base_url,
+            connection_data.api_key,
+            tag_list,
+            prototype.limit
+        )
+    except Exception as e:
+        return f"Failed to query the linkding API: {e}"
+
+    if linkding_options.cache_enabled:
+        cache_key = hashlib.sha256(f"{connection_data.base_url}{connection_data.api_key}{prototype.tags}{prototype.limit}".encode()).hexdigest()
+        match linkding_options.cache_duration_unit:
+            case TimeUnit.MINUTES:
+                ttl_seconds = linkding_options.cache_duration * 60
+            case TimeUnit.HOURS:
+                ttl_seconds = linkding_options.cache_duration * 60 * 60
+            case TimeUnit.DAYS:
+                ttl_seconds = linkding_options.cache_duration * 60 * 60 * 24
+        storage.upsert_linkding_response(cache_key, int(ttl_seconds), linkding_response)
+
+    return linkding_response
 
 def create_tile(user_id: str, prototype: TileConfiguration) -> Tile | str:
     user_data = storage.get_user_data(user_id)
@@ -29,19 +70,7 @@ def create_tile(user_id: str, prototype: TileConfiguration) -> Tile | str:
     if user_data.linkding is None:
         return "No linkding API configuration found. Go to the settings panel to add it."
 
-    tag_list = []
-    if prototype.tags is not None:
-        tag_list = [i for i in prototype.tags.strip().split() if i]
-
-    try:
-        linkding_response = linkding.query(
-            user_data.linkding.base_url,
-            user_data.linkding.api_key,
-            tag_list,
-            prototype.limit
-        )
-    except Exception as e:
-        return f"Failed to query the linkding API: {e}"
+    linkding_response = _get_linkding_response(user_id, user_data.linkding, prototype)
 
     title: str | None = None
     if prototype.title is not None:

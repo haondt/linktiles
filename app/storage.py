@@ -1,6 +1,6 @@
 from flask_login import confirm_login
-from .models import ExtendedThinUser, ThinUser, TileConfiguration, TileConfigurationList, TilesOptions, User, UserData
-import redis
+from .models import ExtendedThinUser, LinkdingOptions, LinkdingResponse, ThinUser, TileConfiguration, TileConfigurationList, TilesOptions, User, UserData
+import redis, time
 from .configuration import configuration
 
 def convert_username_to_id(username: str) -> str:
@@ -12,6 +12,8 @@ class MemoryStorage():
         self.user_data: dict[str, UserData] = {}
         self.tiles: dict[str, list[TileConfiguration]] = {}
         self.tiles_options: dict[str, TilesOptions] = {}
+        self.linkding_options: dict[str, LinkdingOptions] = {}
+        self.linkding_responses: dict[str, tuple[float, LinkdingResponse]] = {}
 
     def get_user(self, username) -> User | None:
         id = convert_username_to_id(username)
@@ -66,17 +68,44 @@ class MemoryStorage():
             return result
         return TilesOptions()
 
+    def upsert_linkding_options(self, user_id: str, linkding_options: LinkdingOptions) -> None:
+        self.linkding_options[user_id] = linkding_options
+
+    def get_linkding_options(self, user_id: str) -> LinkdingOptions:
+        result = self.linkding_options.get(user_id)
+        if result:
+            return result
+        return LinkdingOptions()
+
+    def upsert_linkding_response(self, cache_key: str, time_to_live_seconds: int,  linkding_response: LinkdingResponse) -> None:
+        self.linkding_responses[cache_key] = (time.time() + time_to_live_seconds, linkding_response)
+
+    def get_linkding_response(self, cache_key: str) -> LinkdingResponse | None:
+        hit = self.linkding_responses.get(cache_key)
+        if hit is None:
+            return None
+        if time.time() > hit[0]:
+            try:
+                del self.linkding_responses[cache_key]
+            except:
+                pass
+            return None
+        return hit[1]
+
 class RedisStorage():
     def __init__(self):
         assert configuration.db_port is not None
-        self.client = redis.Redis(
+        self.client = redis.StrictRedis(
             host=configuration.db_host,
             port=configuration.db_port,
             password=configuration.db_password,
+            charset='utf-8',
             decode_responses=True)
         self.user_prefix = 'user'
         self.tiles_prefix = 'tiles:tiles'
         self.tiles_options_prefix = 'tiles:options'
+        self.linkding_options_prefix = 'linkding:options'
+        self.linkding_responses_prefix = 'linkding:responses'
 
     def deserialize_user(self, id: str, data: str) -> tuple[User, UserData]:
         user =  ExtendedThinUser.model_validate_json(data)
@@ -126,6 +155,20 @@ class RedisStorage():
     def get_tiles_options(self, user_id: str) -> TilesOptions:
         result = self.client.get(f'{self.tiles_options_prefix}:{user_id}')
         return TilesOptions.model_validate_json(str(result)) if result else TilesOptions()
+
+    def upsert_linkding_options(self, user_id: str, linkding_options: LinkdingOptions) -> None:
+        assert self.client.set(f'{self.linkding_options_prefix}:{user_id}', linkding_options.model_dump_json())
+
+    def get_linkding_options(self, user_id: str) -> LinkdingOptions:
+        result = self.client.get(f'{self.linkding_options_prefix}:{user_id}')
+        return LinkdingOptions.model_validate_json(str(result)) if result else LinkdingOptions()
+
+    def upsert_linkding_response(self, cache_key: str, time_to_live_seconds: int,  linkding_response: LinkdingResponse) -> None:
+        assert self.client.set(f'{self.linkding_responses_prefix}:{cache_key}', linkding_response.model_dump_json(), ex=time_to_live_seconds)
+
+    def get_linkding_response(self, cache_key: str) -> LinkdingResponse | None:
+        result = self.client.get(f'{self.linkding_responses_prefix}:{cache_key}')
+        return LinkdingResponse.model_validate_json(str(result)) if result else None
 
 
 if configuration.db_engine == 'redis':

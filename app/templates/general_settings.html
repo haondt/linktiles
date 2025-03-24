@@ -19,6 +19,35 @@
     </a>
 </div>
 
+<hr/>
+
+{% macro live_input_indicator() %}
+<span 
+    _="on show remove .is-hidden end on hide add .is-hidden to me"
+    class="icon has-text-success success-indicator is-hidden">
+    <i class="fa-solid fa-check"></i>
+</span>
+<span 
+    _="on show(status) remove .is-hidden set my innerHTML to status end on hide add .is-hidden to me"
+    class="pl-2 has-text-danger failure-indicator is-hidden">
+</span>
+{% endmacro %}
+
+{% macro live_input_hyperscript() %}
+on htmx:beforeRequest
+    send hide to the next .success-indicator within the closest .control
+    send hide to the next .failure-indicator within the closest .control
+end
+    
+on htmx:afterRequest
+    if event.detail.xhr.status == 200
+        send show to the next .success-indicator within the closest .control
+    else
+        send show(status: event.detail.xhr.status) to the next .failure-indicator within the closest .control
+    end
+end
+{% endmacro %}
+
 {% macro live_select(title, name, values, current_value, help) %}
 <div class="block">
     <strong>{{ title }}</strong>
@@ -29,18 +58,7 @@
                 hx-trigger="change" 
                 hx-swap="none"
                 hx-post="{{ url_for('bp.general_settings') }}"
-                _="
-                    on htmx:beforeRequest
-                        send hide to the next .success-indicator within the closest .control
-                        send hide to the next .failure-indicator within the closest .control
-                    end
-                        
-                    on htmx:afterRequest
-                        if event.detail.xhr.status == 200
-                            send show to the next .success-indicator within the closest .control
-                        else
-                            send show(status: event.detail.xhr.status) to the next .failure-indicator within the closest .control
-                ">
+                _="{{ live_input_hyperscript() }}">
                 {% for value in values %}
                 <option {% if current_value == value %}selected{% endif %}>
                     {{ value }}
@@ -48,15 +66,7 @@
                 {% endfor %}
             </select>
         </div>
-        <span 
-            _="on show remove .is-hidden end on hide add .is-hidden to me"
-            class="icon has-text-success success-indicator is-hidden">
-            <i class="fa-solid fa-check"></i>
-        </span>
-        <span 
-            _="on show(status) remove .is-hidden set my innerHTML to status end on hide add .is-hidden to me"
-            class="pl-2 has-text-danger failure-indicator is-hidden">
-        </span>
+        {{ live_input_indicator() }}
     </div>
     <p class="help">
         {{ help }}
@@ -106,27 +116,8 @@
                 hx-trigger="input delay:0.5s" 
                 hx-swap="none"
                 hx-post="{{ url_for('bp.general_settings') }}"
-                _="
-                    on htmx:beforeRequest
-                        send hide to the next .success-indicator within the closest .control
-                        send hide to the next .failure-indicator within the closest .control
-                    end
-                        
-                    on htmx:afterRequest
-                        if event.detail.xhr.status == 200
-                            send show to the next .success-indicator within the closest .control
-                        else
-                            send show(status: event.detail.xhr.status) to the next .failure-indicator within the closest .control
-                ">
-        <span 
-            _="on show remove .is-hidden end on hide add .is-hidden to me"
-            class="icon has-text-success success-indicator is-hidden">
-            <i class="fa-solid fa-check"></i>
-        </span>
-        <span 
-            _="on show(status) remove .is-hidden set my innerHTML to status end on hide add .is-hidden to me"
-            class="pl-2 has-text-danger failure-indicator is-hidden">
-        </span>
+                _="{{ live_input_hyperscript() }}">
+        {{ live_input_indicator() }}
     </div>
     <p class="help">
         The target width for each tile.
@@ -142,7 +133,74 @@
 ) }}
 
 
+<hr/>
 
+<div class="block">
+    <div class="control is-flex is-flex-direction-row is-align-items-center gap-2 mb-2">
+        <label class="checkbox">
+                <input 
+                    style="max-width:150px;"
+                    type="checkbox"
+                    {% if linkding_options.cache_enabled %}checked{% endif %}
+                    name="linkding_cache_enabled" 
+                    hx-trigger="change" 
+                    hx-swap="none"
+                    is="boolean-checkbox"
+                    hx-post="{{ url_for('bp.general_settings') }}"
+                    _="
+                        {{ live_input_hyperscript() }}
+                        
+                        on change
+                            if (my value)
+                                remove @disabled from #linkding-options-cache-duration-input
+                                remove @disabled from #linkding-options-cache-duration-unit-input
+                            else
+                                add @disabled to #linkding-options-cache-duration-input
+                                add @disabled to #linkding-options-cache-duration-unit-input
+                            end
+                        end
+
+
+                    ">
+            <strong class="pl-1">Cache linkding responses</strong>
+        </label>
+        {{ live_input_indicator() }}
+    </div>
+    <div class="control is-flex is-flex-direction-row is-align-items-center gap-2">
+        <input
+            id="linkding-options-cache-duration-input"
+            {% if not linkding_options.cache_enabled %}disabled{% endif %}
+            class="input"
+            style="max-width:150px;"
+            type="number"
+            value="{{ linkding_options.cache_duration }}"
+            name="linkding_cache_duration" 
+            hx-trigger="input delay:0.5s" 
+            hx-swap="none"
+            hx-post="{{ url_for('bp.general_settings') }}"
+            _="{{ live_input_hyperscript() }}">
+        <div class="select">
+            <select 
+                {% if not linkding_options.cache_enabled %}disabled{% endif %}
+                id="linkding-options-cache-duration-unit-input"
+                name="linkding_cache_duration_unit" 
+                hx-trigger="change" 
+                hx-swap="none"
+                hx-post="{{ url_for('bp.general_settings') }}"
+                _="{{ live_input_hyperscript() }}">
+                {% for value in types.TimeUnit %}
+                <option  {% if linkding_options.cache_duration_unit == value %}selected{% endif %}>
+                    {{ value.value }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        {{ live_input_indicator() }}
+    </div>
+    <p class="help">
+        Cache responses from linkding, to increase responsiveness and reduce the number of api calls.
+    </p>
+</div>
 
 <hr/>
 

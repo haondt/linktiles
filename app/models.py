@@ -121,5 +121,15 @@ class Tile(BaseModel):
     seed: float
     groups: list[TileGroup]
 
+class TimeUnit(str, Enum):
+    MINUTES = "minutes"
+    HOURS = "hours"
+    DAYS = "days"
+
+class LinkdingOptions(BaseModel):
+    cache_enabled: bool = False
+    cache_duration_unit: TimeUnit = TimeUnit.MINUTES
+    cache_duration: float = 15
+
 
 

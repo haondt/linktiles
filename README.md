@@ -8,6 +8,14 @@
 
 linktiles is a tile-based read-only frontend for [linkding](https://github.com/sissbruecker/linkding), a minimal bookmark manager. linktiles uses an api key to fetch links from your linkding instance, and displays them in a configurable mosaic.
 
+**Feature Overview:**
+
+- Clean UI matching the style of linkding
+- Display tagged bookmarks as tiles
+- Create groups of bookmarks within a tile
+- Various configuration options to change the look of the tiles
+- SSO support via authentication proxies
+
 ## Development
 
 The application is built using the Flask web framework. You can get started by checking out the excellent [Flask docs](https://flask.palletsprojects.com/en/stable/). The `app` folder contains the actual tiles application. The python stuff follows your typical Flask structure, and frontend interactivity is done through [htmx](https://htmx.org/) and [hyperscript](https://hyperscript.org/).
