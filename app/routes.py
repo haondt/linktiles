@@ -9,12 +9,13 @@ from .authentication import change_password as change_user_password
 from .configuration import configuration
 from . import linkding, linktiles_user
 
-login_manager.login_view = "bp.login"
 
 def add_routes(app):
     bp = Blueprint('bp', __name__, url_prefix='/') 
+    integrations_bp = Blueprint('integrations', __name__, url_prefix='/integrations/')
     if configuration.context_path is not None:
-        bp = Blueprint('bp', __name__, url_prefix=configuration.context_path)
+        bp.url_prefix = '/' + configuration.context_path.strip('/') + '/'
+        integrations_bp.url_prefix =  '/' + configuration.context_path.strip('/') + '/integrations/'
         app.config['APPLICATION_ROOT'] = configuration.context_path
 
     @app.template_global()
@@ -225,10 +226,13 @@ def add_routes(app):
     @login_required
     def integration_settings():
         id =  current_user.get_id()
+        kwargs = {}
         linkding_data = linktiles_user.get_linkding_connection_data(id)
         if linkding_data is not None:
-            return render_template('integration_settings.html', linkding_base_url=linkding_data.base_url)
-        return render_template('integration_settings.html')
+            kwargs['linkding_base_url'] = linkding_data.base_url
+
+        kwargs['glance_token'] = linktiles_user.get_glance_token(id)
+        return render_template('integration_settings.html', **kwargs)
 
     @bp.route('settings/integrations/linkding', methods=['POST'])
     @login_required
@@ -255,6 +259,26 @@ def add_routes(app):
         response.headers["Content-Disposition"] = "attachment; filename=linktiles.json"
         return response
 
+    @integrations_bp.route('glance', methods=['GET'])
+    @login_required
+    def get_glance_integration():
+        rendered = render_template('glance.html')
+        response = make_response(rendered)
+        response.headers['Widget-Title'] = 'linktiles'
+        response.headers['Widget-Content-Type'] = 'html'
+        response.headers['Content-Type'] = 'text/html'
+        response.headers['Widget-Content-Frameless'] = 'true'
+        return response
+
+    @bp.route('settings/integrations/glance/rotate_token', methods=['POST'])
+    @login_required
+    def glance_rotate_token():
+        id =  current_user.get_id()
+        new_token = linktiles_user.rotate_glance_token(id)
+        return render_template('integration_settings_glance_api_key.html', value=new_token)
+
+
     app.register_blueprint(bp)
+    app.register_blueprint(integrations_bp)
 
 

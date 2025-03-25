@@ -26,7 +26,7 @@
 
         <div class="field">
             <div class="control">
-                <input class="input" placeholder="api key" name="api_key" type="password" required>
+                <input class="input" placeholder="API key" name="api_key" type="password" required>
             </div>
         </div>
 
@@ -40,5 +40,66 @@
         </div>
     </form>
 </div>
+
+<hr/>
+
+<div class="block">
+    <strong>Glance Extension</strong>
+    <br>
+    <p>The following token can be used to display your tiles in Glance.</p>
+    <form 
+        class="mt-2">
+        <div class="control">
+            <div class="field has-addons">
+                <div class="control is-expanded">
+                    {% with %}
+                    {% set value = glance_token %}
+                    {% include "integration_settings_glance_api_key.html" %}
+                    {% endwith %}
+                </div>
+                <div class="control">
+                    <button class="button" style="transition: none;"
+                        _="
+                            on click
+                                halt the event 
+                                set glance_token to #glance-token's value
+                                call navigator.clipboard.writeText(glance_token)
+                                set target to the first <i/> in me
+                                remove .fa-copy from target
+                                remove .far from target
+                                add .fa-check to target
+                                add .fas to target
+                                add .has-text-success to me
+                                wait 1.3s
+                                remove .fa-check from target
+                                remove .fas from target
+                                remove .has-text-success from me
+                                add .fa-copy to target
+                                add .far to target
+                        ">
+                        <span class="icon">
+                            <i class="far fa-copy"></i>
+                        </span>
+                    </button>
+                </div>
+                <div class="control">
+                    <button 
+                        class="button is-danger"
+                        hx-post="{{ url_for('bp.glance_rotate_token') }}"
+                        hx-confirm="Are you sure you want to reset your Glance extension key?"
+                        hx-target="#glance-token" hx-swap="outerHTML">
+                        <span class="icon has-text-white">
+                            <i class="fas fa-arrows-rotate"></i>
+                        </span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <p class="help">
+            You can press the button on the right to generate a new authentication token, and invalidate your old one.
+        </p>
+    </form>
+</div>
+
 
 {% endblock %}

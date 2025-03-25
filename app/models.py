@@ -1,9 +1,8 @@
 from enum import Enum
-import random
+import random, secrets
 from flask_login import UserMixin
 from lark import UnexpectedCharacters, UnexpectedToken
 from pydantic import BaseModel, Field, RootModel, field_validator
-
 from .pretty_print_transformer import pretty_print
 
 class User(UserMixin):
@@ -16,6 +15,9 @@ class ThinUser(BaseModel):
 class LinkdingApiConnectionData(BaseModel):
     base_url: str
     api_key: str
+
+def generate_glance_api_key():
+    return secrets.token_hex(28)
 
 class UserData(BaseModel):
     username: str

@@ -1,5 +1,4 @@
-from flask_login import confirm_login
-from .models import ExtendedThinUser, LinkdingOptions, LinkdingResponse, ThinUser, TileConfiguration, TileConfigurationList, TilesOptions, User, UserData
+from .models import ExtendedThinUser, LinkdingOptions, LinkdingResponse, ThinUser, TileConfiguration, TileConfigurationList, TilesOptions, User, UserData, generate_glance_api_key
 import redis, time
 from .configuration import configuration
 
@@ -14,8 +13,9 @@ class MemoryStorage():
         self.tiles_options: dict[str, TilesOptions] = {}
         self.linkding_options: dict[str, LinkdingOptions] = {}
         self.linkding_responses: dict[str, tuple[float, LinkdingResponse]] = {}
+        self.glance_api_keys: dict[str, str] # user_id, api_key
 
-    def get_user(self, username) -> User | None:
+    def get_user(self, username: str) -> User | None:
         id = convert_username_to_id(username)
         return self.users.get(id)
 
@@ -25,6 +25,8 @@ class MemoryStorage():
             return False
         self.users[id] = User(id)
         self.user_data[id] = UserData(username=username, password_hash=password_hash)
+        glance_api_key = generate_glance_api_key()
+        self.glance_api_keys[id] = glance_api_key
         return True
 
     def update_user(self, user: User, user_data: UserData) -> bool:
@@ -42,6 +44,10 @@ class MemoryStorage():
     def get_user_data(self, username) -> UserData | None:
         id = convert_username_to_id(username)
         return self.user_data.get(id)
+
+    def get_or_create_user_data(self, username) -> UserData:
+        id = convert_username_to_id(username)
+        return self.user_data.setdefault(id, UserData(username=username))
 
     def get_user_and_data(self, username) -> tuple[User, UserData] | None:
         id = convert_username_to_id(username)
@@ -92,6 +98,20 @@ class MemoryStorage():
             return None
         return hit[1]
 
+    def get_user_id_from_glance_token(self, token) -> str | None:
+        for k, v in self.glance_api_keys.items():
+            if v == token:
+                return k
+        return None
+    
+    def get_glance_token_from_user_id(self, user_id) -> str | None:
+        return self.glance_api_keys.get(user_id)
+
+    def rotate_user_glance_token(self, user_id) -> str:
+        token = generate_glance_api_key()
+        self.glance_api_keys[user_id] = token
+        return token
+
 class RedisStorage():
     def __init__(self):
         assert configuration.db_port is not None
@@ -106,6 +126,8 @@ class RedisStorage():
         self.tiles_options_prefix = 'tiles:options'
         self.linkding_options_prefix = 'linkding:options'
         self.linkding_responses_prefix = 'linkding:responses'
+        self.glance_to_user_key = 'glance:token_to_user_map'
+        self.user_to_glance_key = 'glance:user_to_token_map'
 
     def deserialize_user(self, id: str, data: str) -> tuple[User, UserData]:
         user =  ExtendedThinUser.model_validate_json(data)
@@ -119,7 +141,7 @@ class RedisStorage():
         serialized = self.client.get(f'{self.user_prefix}:{id}')
         return self.deserialize_user(id, str(serialized)) if serialized else None
 
-    def get_user(self, username) -> User | None:
+    def get_user(self, username: str) -> User | None:
         result = self.get_user_and_data(username)
         return result[0] if result else None
 
@@ -128,6 +150,10 @@ class RedisStorage():
         user = User(id)
         user_data = UserData(username=username, password_hash=password_hash)
         result = self.client.setnx(f'{self.user_prefix}:{id}', self.serialize_user(user, user_data))
+        if result:
+            glance_api_key = generate_glance_api_key()
+            result = self.client.hset(self.glance_to_user_key, glance_api_key, id) \
+                and self.client.hset(self.user_to_glance_key, id, glance_api_key)
         return bool(result)
 
     def update_user(self, user: User, user_data: UserData) -> bool:
@@ -141,6 +167,15 @@ class RedisStorage():
     def get_user_data(self, username: str) -> UserData | None:
         result = self.get_user_and_data(username)
         return result[1] if result else None
+
+    def get_or_create_user_data(self, username) -> UserData:
+        result = self.get_user_data(username)
+        if result:
+            return result
+        self.add_user(username, None)
+        result = self.get_user_data(username)
+        assert result is not None
+        return result
 
     def upsert_tiles(self, user_id: str, tiles: list[TileConfiguration]) -> None:
         assert self.client.set(f'{self.tiles_prefix}:{user_id}', TileConfigurationList(root=tiles).model_dump_json())
@@ -169,6 +204,23 @@ class RedisStorage():
     def get_linkding_response(self, cache_key: str) -> LinkdingResponse | None:
         result = self.client.get(f'{self.linkding_responses_prefix}:{cache_key}')
         return LinkdingResponse.model_validate_json(str(result)) if result else None
+
+    def get_user_id_from_glance_token(self, token) -> str | None:
+        user_id = self.client.hget(self.glance_to_user_key, token)
+        return str(user_id) if user_id else None
+    
+    def get_glance_token_from_user_id(self, user_id) -> str | None:
+        glance_token = self.client.hget(self.user_to_glance_key, user_id)
+        return str(glance_token) if glance_token else None
+
+    def rotate_user_glance_token(self, user_id) -> str:
+        old_token = self.client.hget(self.user_to_glance_key, user_id)
+        if old_token:
+            self.client.hdel(self.glance_to_user_key, str(old_token))
+        new_token = generate_glance_api_key()
+        self.client.hset(self.user_to_glance_key, user_id, new_token)
+        self.client.hset(self.glance_to_user_key, new_token, user_id)
+        return new_token
 
 
 if configuration.db_engine == 'redis':
