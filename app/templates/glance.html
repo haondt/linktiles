@@ -1,1 +1,115 @@
-<div>hello, glance</div>
+<style>
+    .linktiles-masonry {
+        gap: calc(var(--widget-content-vertical-padding) * 0.7);
+    }
+    .linktiles-list, .linktiles-masonry {
+        .linktiles-container + .linktiles-container {
+            margin-top: calc(var(--widget-content-vertical-padding) * 0.7);
+        }
+        .linktiles-container + .linktiles-container > .widget-header {
+            margin-top: calc(var(--widget-gap) * 0.4);
+        }
+    }
+    .linktiles-group + .linktiles-group {
+        margin-top: 0.75rem;
+
+    }
+    .linktiles-group-body.is-layout-columns {
+        display: grid;
+        column-gap: 0.75rem;
+        grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+    }
+    .linktiles-inside-title {
+        padding-left: 0;
+    }
+</style>
+
+{% macro tile_macro(tile) %}
+<div class="linktiles-container flex flex-column">
+    {% if tile.title and options.title_location == types.TileTitleLocation.OUTSIDE %}
+    <div class="uppercase widget-header">
+        {{ tile.title }}
+    </div>
+    {% endif %}
+    <div class="widget-content">
+        {% if tile.title and options.title_location == types.TileTitleLocation.INSIDE %}
+        <div class="uppercase widget-header linktiles-inside-title">
+            {{ tile.title }}
+        </div>
+        {% endif %}
+
+        {% for group in tile.groups %}
+        <div class="linktiles-group flex flex-column">
+            {% if group.title %}
+            <p class="color-subdue">
+                {{ group.title }}
+            </p>
+            {% endif %}
+            <div class="linktiles-group-body  {% if options.group_layout == types.TileGroupLayout.COLUMNS %}is-layout-columns{% endif %}">
+                {% if options.group_layout == types.TileGroupLayout.DEFAULT %}
+                    {% for link in group.links %}
+                    <a class="size-h3 color-primary" href="{{ link.location }}">
+                        {{ link.name }}
+                    </a>
+                    {% endfor %}
+                {% elif options.group_layout == types.TileGroupLayout.LOOSE %}
+                    <ul class="list-horizontal-text"> 
+                        {% for link in group.links %}
+                        <li><a class="size-h3 color-primary" href="{{ link.location }}">
+                                {{- link.name -}}
+                        </a></li>
+                        {% endfor %}
+                    </ul>
+                {% elif options.group_layout == types.TileGroupLayout.LIST %}
+                    <ul class="list"> 
+                        {% for link in group.links %}
+                        <li><a class="size-h3 color-primary" href="{{ link.location }}">
+                                {{- link.name -}}
+                        </a></li>
+                        {% endfor %}
+                    </ul>
+                {% elif options.group_layout == types.TileGroupLayout.COLUMNS %}
+                    {% for link in group.links %}
+                    <a class="size-h3 color-primary" href="{{ link.location }}">
+                            {{- link.name -}}
+                    </a>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endmacro %}
+
+
+{% if error %}
+<div class="widget-content color-negative">
+    {{ error }}
+</div>
+
+
+{% else %}
+{% if options.layout == types.TileLayout.MASONRY %}
+<div class="masonry linktiles-masonry" data-min-column-width="{{ options.width }}">
+    {% for tile in tiles %}
+    {{ tile_macro(tile) }}
+    {% endfor %}
+</div>
+
+{% elif options.layout == types.TileLayout.GRID %}
+<div class="cards-grid">
+    {% for tile in tiles %}
+    {{ tile_macro(tile) }}
+    {% endfor %}
+</div>
+
+{% elif options.layout == types.TileLayout.LIST %}
+<div class="linktiles-list">
+    {% for tile in tiles %}
+    {{ tile_macro(tile) }}
+    {% endfor %}
+</div>
+{% endif %}
+
+{% endif %}

@@ -33,7 +33,6 @@ class CustomSessionInterface(SecureCookieSessionInterface):
 
 @login_manager.request_loader
 def load_user_from_request(request: Request):
-    print(request.headers)
     if request.endpoint == 'integrations.get_glance_integration':
         auth_header = request.headers.get('authorization')
         if auth_header and auth_header.startswith('Bearer '):

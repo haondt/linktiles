@@ -5,9 +5,34 @@
 {% include 'settings.html' %}
 {% endwith %}
 
+{% macro live_input_indicator() %}
+<span 
+    _="on show remove .is-invisible end on hide add .is-invisible to me"
+    class="icon has-text-success success-indicator is-invisible">
+    <i class="fa-solid fa-check"></i>
+</span>
+<span 
+    _="on show(status) remove .is-invisible set my innerHTML to status end on hide add .is-invisible to me"
+    class="pl-2 has-text-danger failure-indicator is-invisible">
+</span>
+{% endmacro %}
+{% macro live_input_hyperscript() %}
+on htmx:beforeRequest
+    send hide to the next .success-indicator within the closest .control
+    send hide to the next .failure-indicator within the closest .control
+end
+    
+on htmx:afterRequest
+    if event.detail.xhr.status == 200
+        send show to the next .success-indicator within the closest .control
+    else
+        send show(status: event.detail.xhr.status) to the next .failure-indicator within the closest .control
+    end
+end
+{% endmacro %}
+
 <div class="block">
-    <strong>Linkding API</strong>
-    <br>
+    <label class="label">Linkding API</label>
     <p>Configure the linkding API connection.</p>
     <form 
         hx-post="{{ url_for('bp.linkding_integration_settings') }}"
@@ -44,12 +69,11 @@
 <hr/>
 
 <div class="block">
-    <strong>Glance Extension</strong>
-    <br>
+    <label class="label">Glance Extension</label>
     <p>The following token can be used to display your tiles in Glance.</p>
     <form 
         class="mt-2">
-        <div class="control">
+        <div class="control mb-1">
             <div class="field has-addons">
                 <div class="control is-expanded">
                     {% with %}
@@ -95,7 +119,7 @@
                 </div>
             </div>
         </div>
-        <p class="help">
+        <p>
             You can press the button on the right to generate a new authentication token, and invalidate your old one.
         </p>
     </form>

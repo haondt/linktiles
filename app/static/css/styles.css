@@ -181,8 +181,7 @@
     --linktiles-tile-h: 222;
     --linktiles-tile-s: 14%;
     --linktiles-tile-background-l: 14%;
-    --linktiles-tile-color-l: var(--bulma-info-invert-l);
-    color: hsl(0, 0%, 88%);
+    color: hsl(0, 0%, 83%);
 }
 .tile-body.is-outlined {
     background-color: #14161a;

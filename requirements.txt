@@ -1,6 +1,7 @@
-flask
+flask[async]
 flask-login
 bcrypt
 redis
 pydantic
 lark
+aiohttp

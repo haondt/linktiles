@@ -3,7 +3,7 @@ import random
 from pydantic import ValidationError
 
 from .models import TileColors, TileConfiguration, TileFill, TileGroupLayout, TileLayout, TileTitleLocation, TilesSettingsRequest, TimeUnit
-from .tiles import create_tile, export_tiles_configuration, get_linkding_options, get_tiles_configuration, get_tiles_options, update_linkding_options, update_tiles_configuration, update_tiles_options
+from .tiles import create_tile, create_tiles_async, export_tiles_configuration, get_linkding_options, get_tiles_configuration, get_tiles_options, update_linkding_options, update_tiles_configuration, update_tiles_options
 from .authentication import login_user, login_required, logout_user, login_manager, register_user, verify_password, current_user
 from .authentication import change_password as change_user_password
 from .configuration import configuration
@@ -261,8 +261,15 @@ def add_routes(app):
 
     @integrations_bp.route('glance', methods=['GET'])
     @login_required
-    def get_glance_integration():
-        rendered = render_template('glance.html')
+    async def get_glance_integration():
+        user_id = current_user.get_id()
+        tiles = await create_tiles_async(user_id)
+        if isinstance(tiles, str):
+            rendered = render_template('glance.html', error=tiles)
+        else:
+            tiles_options = get_tiles_options(user_id)
+            rendered = render_template('glance.html', tiles=tiles, options=tiles_options)
+
         response = make_response(rendered)
         response.headers['Widget-Title'] = 'linktiles'
         response.headers['Widget-Content-Type'] = 'html'
