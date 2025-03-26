@@ -42,7 +42,7 @@ Run `docker compose up -d` and you should be able to visit the UI at http://loca
 
 ## Contributing
 
-Contributions are welcome, but may be denied if I feel they don't fit the scope of the app. Please on PRs on [GitLab](https://gitlab.com/haondt/linktiles/).
+Contributions are welcome, but may be denied if I feel they don't fit the scope of the app. Please open PRs on [GitLab](https://gitlab.com/haondt/linktiles/).
 
 ## Development
 
