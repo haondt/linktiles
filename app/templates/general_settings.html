@@ -76,28 +76,28 @@ end
 {% endmacro %}
 
 {{ live_select(
-    'Tile Colors', 
+    'Tile colors', 
     'tile_colors',
     types.TileColors | map(attribute='value'),
     tiles_options.colors.value,
     'How to select the colors for each tile.'
 ) }}
 {{ live_select(
-    'Tile Fill', 
+    'Tile fill', 
     'tile_fill',
     types.TileFill | map(attribute='value'),
     tiles_options.fill.value,
     'How to apply the color to the tile.'
 ) }}
 {{ live_select(
-    'Title Location', 
+    'Title location', 
     'tile_title_location',
     types.TileTitleLocation | map(attribute='value'),
     tiles_options.title_location.value,
     'Where to display the tile titles.'
 ) }}
 {{ live_select(
-    'Tile Layout', 
+    'Tile layout', 
     'tile_layout',
     types.TileLayout | map(attribute='value'),
     tiles_options.layout.value,
@@ -106,7 +106,7 @@ end
 
 
 <div class="block">
-    <label class="label">Tile Width</label>
+    <label class="label">Tile width</label>
     <div class="control is-flex is-flex-direction-row is-align-items-center gap-2">
             <input 
                 class="input"
@@ -126,7 +126,7 @@ end
 </div>
 
 {{ live_select(
-    'Tile Group Layout', 
+    'Tile group layout', 
     'tile_group_layout',
     types.TileGroupLayout | map(attribute='value'),
     tiles_options.group_layout.value,
@@ -199,7 +199,7 @@ end
         {{ live_input_indicator() }}
     </div>
     <p>
-        Cache responses from linkding, to increase responsiveness and reduce the number of api calls.
+        Cache responses from linkding, to increase responsiveness and reduce the number of API calls.
     </p>
 </div>
 

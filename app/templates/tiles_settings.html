@@ -13,7 +13,7 @@
                 hx-target="#tile-configuration-list"
                 hx-swap="afterbegin"
                 class="button has-text-info">
-                Add Tile
+                Add tile
             </button>
             <a class="" _="on click add .is-active to #help-modal">
                 Help
@@ -96,10 +96,10 @@
                         Similar to the <strong>Tags</strong> field, you may enter any number of space-delimited tags here. Within the tile, links will be grouped by each tag entered here. If a link can belong to more than one group, it will belong to the first match. Any tags not belonging to a configured group will be grouped together at the end of the tile.
                     </p>
                     <p>
-                    You may also use the dollar sign ($) to access special functions/variables in group definitions. To insert a tag with a $ in it, you must escape it with a backslash (\). The following characters must also be escaped to use them as part of a tag:<code>\</code>, <code>(</code>, <code>)</code>.
+                    You may also use the dollar sign ($) to access certain grouping operators in group definitions. To insert a tag with a $ in it, you must escape it with a backslash (\). The following characters must also be escaped to use them as part of a tag:<code>\</code>, <code>(</code>, <code>)</code>.
                     </p>
                     <p>
-                        <strong>The special functions are as follows:</strong>
+                        <strong>The operators are as follows:</strong>
                         <br>
                         <code>$all(tag1 tag2 tag3)</code> - Form a group with multiple space-delimited tags. The captured links must belong to all tags in the list.
                         <br>
