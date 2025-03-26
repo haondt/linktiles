@@ -17,15 +17,26 @@ linktiles is a tile-based read-only frontend for [linkding](https://github.com/s
 - SSO support via authentication proxies
 - Built-in [Glance](https://github.com/glanceapp/glance) extension.
 
-**Screenshot:**
+**Gallery**
 
-Coming soon!
+linktiles offers several customization options, which allow you to change the look and feel of the tile layout.
+
+<p float="left">
+  <img height="300px" src="docs/assets/linktiles_1.png" style="margin-right: 10px;">
+  <img height="300px" src="docs/assets/linktiles_2.png">
+</p>
+
+linktiles will also propogate the styling configuration to the Glance extension.
+
+<p float="left">
+  <img height="300px" src="docs/assets/glance_1.png" style="margin-right: 10px;">
+  <img height="300px" src="docs/assets/glance_2.png">
+</p>
 
 ## Quickstart
 
 The recommended method of installation is Docker Compose. By default, linktiles will persist data in memory. This is good for testing it out, but long term you will want to set up a Redis container for persistence.
 
-`docker-compose.yml`
 ```yml
 services:
   linktiles:
@@ -36,6 +47,10 @@ services:
 ```
 
 Run `docker compose up -d` and you should be able to visit the UI at http://localhost:5001/. For more details, visit the [docs](https://docs.haondt.dev/linktiles/).
+
+## Contributing
+
+Contributions are welcome, but may be denied if I feel they don't fit the scope of the app. Please on PRs on [GitLab](https://gitlab.com/haondt/linktiles/).
 
 ## Development
 

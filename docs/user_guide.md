@@ -128,44 +128,8 @@ On the _Integrations_ tab, aside from the linkding integration, linktiles can in
 
 This token can be used to connect to display your tiles in Glance. The tiles will be rendered using Glances style classes.
 
-In order to connect, Glance needs to make requests to linktiles using the provided token in the authorization header. At the time of writing, Glance does not support this behavior, though an [issue](https://github.com/glanceapp/glance/issues/514) is open.
-
-As a workaround, you can set up a sidecar to proxy requests going to linktiles. There's a few ways to do this, NGINX is one option, detailed below.
-
-If you're using docker compose, you can set up Glance and NGINX like this:
-
-```yaml title='docker-compose.yml'
-services:
-  glance:
-    container_name: glance
-    image: glanceapp/glance
-    volumes:
-      - ./glance.yml:/app/config/glance.yml
-    ports:
-      - 8081:8080
-  glance-linktiles-proxy:
-    container_name: glance-linktiles-proxy
-    image: nginx:mainline-alpine
-    volumes:
-      - ./proxy.conf:/etc/nginx/nginx.conf
-```
-
-Then in your NGINX config you can set the url and add the authorization header:
-
-```title='proxy.conf'
-events {}
-http {
-  server {
-    listen 80;
-    location / {
-      proxy_pass http://linktiles:5001;
-      proxy_set_header Authorization "Bearer 597661f176d507ddc10c98f9e307820831996c63263379693638ae33";
-    }
-  }
-}
-```
-
-Lastly, you can set up the extension in Glance. This requires the `allow-potentially-dangerous-html` flag to render everything correctly. 
+In order to connect, Glance needs to make requests to linktiles using the provided token in the authorization header. Glance added support for this in version **v0.7.8**, so you must use at least that version.
+Below is an example Glance configuration. This requires the `allow-potentially-dangerous-html` flag to render everything correctly. 
 
 ```yaml title='glance.yml'
 pages:
@@ -174,6 +138,14 @@ pages:
       - size: full
         widgets:
           - type: extension
-            url: http://glance-linktiles-proxy/tiles/integrations/glance
+            url: http://glance-linktiles-proxy/integrations/glance
             allow-potentially-dangerous-html: true
 ```
+
+!!! note
+
+    If you are using `LT_ENABLE_AUTH_PROXY` and protecting your entire linktiles path, you will run into issues
+    if Glance is not able to get through your auth proxy. In this case you may want to modify your proxy such that the 
+    `/integrations/glance` route can skip authentication. linktiles recognizes this route and will explicitly require a valid
+    authorization token.
+

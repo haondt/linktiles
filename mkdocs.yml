@@ -1,4 +1,4 @@
-site_name: linktiles
+site_name: linktiles docs
 
 nav:
   - Home: index.md
@@ -13,6 +13,8 @@ theme:
     primary: black
   features:
     - content.code.copy
+  logo: assets/logo.svg
+  favicon: assets/logo.svg
 
 plugins:
   - search
@@ -29,3 +31,4 @@ markdown_extensions:
   - pymdownx.superfences
   - pymdownx.blocks.tab:
       alternate_style: true
+  - admonition

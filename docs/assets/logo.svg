@@ -1,0 +1,35 @@
+<svg width="28" height="28" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    
+<polygon points="53,10 96,35 53,60 10,35" fill="#1C2526"></polygon>
+
+    
+<polygon points="96,35 96,55 53,80 53,60" fill="#151C1D"></polygon>
+
+    
+    <polygon points="10,35 53,60 53,80 10,55" fill="#0F1415"></polygon>
+
+
+    
+    
+    
+<polygon points="104,60 147,85 104,110 61,85" fill="#D66A6A"></polygon>
+
+    
+<polygon points="147,85 147,105 104,130 104,110" fill="#C15F5F"></polygon>
+
+    
+    <polygon points="61,85 104,110 104,130 61,105" fill="#AC5454"></polygon>
+
+
+    
+    
+    
+<polygon points="53,110 96,135 53,160 10,135" fill="#F4A7A7"></polygon>
+
+    
+<polygon points="96,135 96,155 53,180 53,160" fill="#DF9999"></polygon>
+
+    
+    <polygon points="10,135 53,160 53,180 10,155" fill="#CA8B8B"></polygon>
+
+</svg>

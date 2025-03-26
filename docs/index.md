@@ -17,4 +17,29 @@ Check the [installation](./installation.md) guide to get started.
 
 ## Gallery
 
-Coming soon!
+linktiles offers several customization options, which allow you to change the look and feel of the tile layout.
+
+<figure markdown="span">
+  <img style="height:500px;" src="./assets/linktiles_1.png"/>
+  <figcaption>Masonry layout</figcaption>
+</figure>
+<figure markdown="span">
+  <img style="height:500px;" src="./assets/linktiles_2.png"/>
+  <figcaption>Ghost fill</figcaption>
+</figure>
+
+
+### Glance
+
+linktiles will also propogate the styling configuration to the Glance extension.
+
+<figure markdown="span">
+  <img style="height:500px;" src="./assets/glance_1.png"/>
+  <figcaption>Masonry layout</figcaption>
+</figure>
+<figure markdown="span">
+  <img style="height:500px;" src="./assets/glance_2.png"/>
+  <figcaption>Ghost fill</figcaption>
+</figure>
+
+
