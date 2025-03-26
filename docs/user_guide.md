@@ -47,28 +47,28 @@ The available grouping operators are as follows:
 - `$named(title tag)` - Create a group with a title. Accepts a title and a tag separated by a space. If you want to include a space in the title, you can escape the space with a backslash.
 - `$ungrouped` - A reference to the ungrouped links, you can use this to create a named grouped with them or choose what order they appear in.
 
-Grouping operators can also be freely nested within each other, for example: `$named(1\ to\ 3 $any(tag1 tag2 tag3))` would produce a named group "1 to 3", than contains all bookmarks with any of the tags `tag1`, `tag2`, `tag3`.
+Grouping operators can also be freely nested within each other, for example: `$named(1\ to\ 3 $any(tag1 tag2 tag3))` would produce a named group "1 to 3", that contains all bookmarks with any of the tags `tag1`, `tag2`, `tag3`. The only limitation is you can't nest a `$named` group inside another `$named` group.
 
 ### Reordering tiles
 
-You can drag the handle on the left of the prototype to reorder the tiles. You can also click the remove button to delete the prototype.
+Drag the handle on the left of the prototype to reorder the tiles. You can click the remove button in the bottom right to delete the prototype.
 
 Once you're all done, be sure to hit the _Save_ button!
 
 ## General settings
 
-Switching over to the `General` tab will give you options on how to render the tile mosaic.
+Switching over to the `General` tab will give you options on how to render the tile mosaic. This is where you will also find the option to change your password.
 
 ### Tile look and feel
 
 #### Tile colors
 
-This sets the colors of the tiles. By default they will be close to a 50/50 split between dark and light colors.
+This sets the colors of the tiles.
 
 - Random: randomly pick a color (roughly 50/50 chance of getting a dark or bright color) and assign it to the tile, keeping the same color for the lifetime of the tile.
 - Really Random: re-pick the color every time the page loads
 - Dark: only use dark colors
-- Bright: only user bright colors
+- Bright: only use bright colors
 - Darker: increase the bias towards dark colors
 - Brighter: increase the bias towards light colors
 
@@ -82,13 +82,16 @@ How to fill in the tile color.
 
 #### Title location
 
-Whether to display the tile title inside or outside of the tiles body.
+Where to display the tile title.
+
+- Inside: inside the tile
+- Outside: above the tile
 
 #### Tile layout
 
 How to arrange the tiles in the mosaic.
 
-- Masonry: maintain regular columns while squeezing the tiles as close together as possible row-wise
+- Masonry: maintain regular columns while squeezing the tiles as close together as possible vertically, giving a staggered layout
 - Grid: a tabular grid of regular rows and columns
 - List: a single vertical list
 
@@ -125,7 +128,7 @@ On the _Integrations_ tab, aside from the linkding integration, linktiles can in
 
 This token can be used to connect to display your tiles in Glance. The tiles will be rendered using Glances style classes.
 
-In order to connect, Glance needs to make requests to linktiles using the token in the authentication header. At the time of writing, Glance does not support this behavior, though an [issue](https://github.com/glanceapp/glance/issues/514) is open.
+In order to connect, Glance needs to make requests to linktiles using the provided token in the authorization header. At the time of writing, Glance does not support this behavior, though an [issue](https://github.com/glanceapp/glance/issues/514) is open.
 
 As a workaround, you can set up a sidecar to proxy requests going to linktiles. There's a few ways to do this, NGINX is one option, detailed below.
 
