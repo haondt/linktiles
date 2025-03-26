@@ -19,19 +19,11 @@ linktiles is a tile-based read-only frontend for [linkding](https://github.com/s
 
 **Gallery**
 
-linktiles offers several customization options, which allow you to change the look and feel of the tile layout.
+<img height="500px" src="docs/assets/linktiles_1.png" style="margin-right: 10px;">
 
-<p float="left">
-  <img height="300px" src="docs/assets/linktiles_1.png" style="margin-right: 10px;">
-  <img height="300px" src="docs/assets/linktiles_2.png">
-</p>
+**Glance extension**
 
-linktiles will also propogate the styling configuration to the Glance extension.
-
-<p float="left">
-  <img height="300px" src="docs/assets/glance_1.png" style="margin-right: 10px;">
-  <img height="300px" src="docs/assets/glance_2.png">
-</p>
+<img height="500px" src="docs/assets/glance_1.png" style="margin-right: 10px;">
 
 ## Quickstart
 
