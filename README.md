@@ -26,7 +26,7 @@ Coming soon!
 The recommended method of installation is Docker Compose. By default, linktiles will persist data in memory. This is good for testing it out, but long term you will want to set up a Redis container for persistence.
 
 `docker-compose.yml`
-```
+```yml
 services:
   linktiles:
     image: haumea/linktiles:latest
