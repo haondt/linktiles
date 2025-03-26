@@ -38,7 +38,7 @@ class TileConfiguration(BaseModel):
     @field_validator("tags")
     @classmethod
     def clean_tags(cls, value):
-        return " ".join(value.split()) if value else None
+        return " ".join(set([i.lower() for i in value.split() if i])) if value else None
 
     @field_validator("groups")
     @classmethod

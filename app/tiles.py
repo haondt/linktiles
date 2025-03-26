@@ -1,6 +1,7 @@
 import asyncio
 import hashlib
 import aiohttp
+import json
 
 from . import linkding
 from .grouper_transformer import create_grouper
@@ -68,9 +69,32 @@ def get_linkding_options(user_id: str) -> LinkdingOptions:
 def update_linkding_options(user_id: str, options: LinkdingOptions) -> None:
     return storage.upsert_linkding_options(user_id, options)
 
+def _compute_cache_key(connection_data: LinkdingApiConnectionData, prototype: TileConfiguration, ttl_seconds: int) -> str:
+    key_data = {
+        "base_url": connection_data.base_url,
+        "api_key": connection_data.api_key,
+        "tags": prototype.tags,
+        "limit": prototype.limit,
+        "duration": ttl_seconds # poor mans cache invalidation
+    }
+    key_string = json.dumps(key_data, sort_keys=True)
+    return hashlib.sha256(key_string.encode()).hexdigest()
+
+def _compute_cache_time_to_live(linkding_options: LinkdingOptions) -> int:
+    match linkding_options.cache_duration_unit:
+        case TimeUnit.MINUTES:
+            return int(linkding_options.cache_duration * 60)
+        case TimeUnit.HOURS:
+            return int(linkding_options.cache_duration * 60 * 60)
+        case TimeUnit.DAYS:
+            return int(linkding_options.cache_duration * 60 * 60 * 24)
+
 async def _get_linkding_response_async(linkding_options: LinkdingOptions, connection_data: LinkdingApiConnectionData, prototype: TileConfiguration, session: aiohttp.ClientSession) -> LinkdingResponse | str:
+    ttl_seconds = None
+    cache_key = None
     if linkding_options.cache_enabled:
-        cache_key = hashlib.sha256(f"{connection_data.base_url}{connection_data.api_key}{prototype.tags}{prototype.limit}".encode()).hexdigest()
+        ttl_seconds = _compute_cache_time_to_live(linkding_options)
+        cache_key = _compute_cache_key(connection_data, prototype, ttl_seconds)
         cached = storage.get_linkding_response(cache_key)
         if cached:
             return cached
@@ -91,22 +115,19 @@ async def _get_linkding_response_async(linkding_options: LinkdingOptions, connec
         return f"Failed to query the linkding API: {e}"
 
     if linkding_options.cache_enabled:
-        cache_key = hashlib.sha256(f"{connection_data.base_url}{connection_data.api_key}{prototype.tags}{prototype.limit}".encode()).hexdigest()
-        match linkding_options.cache_duration_unit:
-            case TimeUnit.MINUTES:
-                ttl_seconds = linkding_options.cache_duration * 60
-            case TimeUnit.HOURS:
-                ttl_seconds = linkding_options.cache_duration * 60 * 60
-            case TimeUnit.DAYS:
-                ttl_seconds = linkding_options.cache_duration * 60 * 60 * 24
+        ttl_seconds = ttl_seconds or _compute_cache_time_to_live(linkding_options)
+        cache_key = cache_key or _compute_cache_key(connection_data, prototype, ttl_seconds)
         storage.upsert_linkding_response(cache_key, int(ttl_seconds), linkding_response)
 
     return linkding_response
 
 def _get_linkding_response(user_id: str, connection_data: LinkdingApiConnectionData, prototype: TileConfiguration) -> LinkdingResponse | str:
     linkding_options = storage.get_linkding_options(user_id)
+    ttl_seconds = None
+    cache_key = None
     if linkding_options.cache_enabled:
-        cache_key = hashlib.sha256(f"{connection_data.base_url}{connection_data.api_key}{prototype.tags}{prototype.limit}".encode()).hexdigest()
+        ttl_seconds = _compute_cache_time_to_live(linkding_options)
+        cache_key = _compute_cache_key(connection_data, prototype, ttl_seconds)
         cached = storage.get_linkding_response(cache_key)
         if cached:
             return cached
@@ -126,15 +147,9 @@ def _get_linkding_response(user_id: str, connection_data: LinkdingApiConnectionD
         return f"Failed to query the linkding API: {e}"
 
     if linkding_options.cache_enabled:
-        cache_key = hashlib.sha256(f"{connection_data.base_url}{connection_data.api_key}{prototype.tags}{prototype.limit}".encode()).hexdigest()
-        match linkding_options.cache_duration_unit:
-            case TimeUnit.MINUTES:
-                ttl_seconds = linkding_options.cache_duration * 60
-            case TimeUnit.HOURS:
-                ttl_seconds = linkding_options.cache_duration * 60 * 60
-            case TimeUnit.DAYS:
-                ttl_seconds = linkding_options.cache_duration * 60 * 60 * 24
-        storage.upsert_linkding_response(cache_key, int(ttl_seconds), linkding_response)
+        ttl_seconds = ttl_seconds or _compute_cache_time_to_live(linkding_options)
+        cache_key = cache_key or _compute_cache_key(connection_data, prototype, ttl_seconds)
+        storage.upsert_linkding_response(cache_key, ttl_seconds, linkding_response)
 
     return linkding_response
 

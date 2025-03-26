@@ -64,7 +64,7 @@ The password to use for the database connection.
 
 - default (when db engine is `redis`): `6379`
 
-The password to use for the database connection.
+The port to use for the database connection.
 
 ## Server behavior
 
