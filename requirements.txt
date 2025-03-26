@@ -5,3 +5,4 @@ redis
 pydantic
 lark
 aiohttp
+requests

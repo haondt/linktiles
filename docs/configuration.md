@@ -86,3 +86,9 @@ If set, linktiles will use this path as a prefix for all its routes. Useful if y
 - default: `5001`
 
 Which port linktiles should serve itself on.
+
+### `GUNICORN_WORKERS`
+
+- default: `2`
+
+When running linktiles via the docker image, this value can be used to configure how many worker processes to use.

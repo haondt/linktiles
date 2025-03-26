@@ -1,0 +1,20 @@
+services:
+  linktiles:
+    image: haumea/linktiles:latest
+    container_name: linktiles
+    networks:
+      - linktiles
+    ports:
+      - 5001:5001
+    environment:
+      LT_DB_ENGINE: redis
+      LT_DB_HOST: linktiles-redis
+  linktiles-redis:
+    image: redis:latest
+    container_name: linktiles-redis
+    networks:
+      - linktiles
+
+networks:
+  linktiles:
+

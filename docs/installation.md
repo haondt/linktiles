@@ -4,7 +4,7 @@ The easiest way to get up and running is with [Docker Compose](https://docs.dock
 
 ## Example configuration
 
-Below is a sample `docker-compose.yml` that will spin up linktiles and a redis container for persistence.
+Below is a sample `docker-compose.yml` that will spin up linktiles and a Redis container for persistence.
 
 ```yaml title='docker-compose.yml'
 services:
@@ -13,11 +13,10 @@ services:
     container_name: linktiles
     networks:
       - linktiles
-    port:
+    ports:
       - 5001:5001
     environment:
       LT_DB_ENGINE: redis
-      LT_DB_PORT: 6378
       LT_DB_HOST: linktiles-redis
   linktiles-redis:
     image: redis:latest
@@ -25,7 +24,7 @@ services:
     networks:
       - linktiles
 
-network:
+networks:
   linktiles:
 ```
 

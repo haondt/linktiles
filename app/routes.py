@@ -16,7 +16,6 @@ def add_routes(app):
     if configuration.context_path is not None:
         bp.url_prefix = '/' + configuration.context_path.strip('/') + '/'
         integrations_bp.url_prefix =  '/' + configuration.context_path.strip('/') + '/integrations/'
-        app.config['APPLICATION_ROOT'] = configuration.context_path
 
     @app.template_global()
     def randint(lower, upper):

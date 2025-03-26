@@ -4,13 +4,13 @@ This page covers how to configure your tiles once you have the application up an
 
 linktiles can connect to a linkding instance anywhere, they don't need to be hosted on the same machine thanks to the linkding API. Check the [linkding docs](https://linkding.link/api/) to find out how to retrieve your API key. Then navigate to _Settings_ > _Integrations_, and add your API key along with the linkding base url.
 
-Hit _Test & Save_, and if all goes well you should see a successful connection message. Next time you load this page, the API key field will be empty. Your key is still saved in the database, its just not provided back to you. If you need to retrieve it again, head back to linkding. 
+Hit _Test & Save_, and if all goes well you should see a successful connection message. The next time you load this page, the API key field will appear empty. Your key is still saved in the database, its just not provided back to you. If you need to retrieve it again, head back to linkding. 
 
 ## Creating tiles
 
 In the _Settings_ page, open up the _Tiles_ tab. This is where you can modify your tile layout. If you click the _Help_ button, it will show you an overview of how to configure a tile, those instructions are repeated here.
 
-Click _Add tile_ to create a new tile. This adds a new "protoype tile", which corresponds to a single tile in the main view. 
+Click _Add tile_ to create a new tile. This adds a new "protoype tile", which provides the configuration for a single tile in the main view. 
 
 ### Fields
 
@@ -44,7 +44,7 @@ The available grouping operators are as follows:
 
 - `$all(tag1 tag2 tag3)` - Form a group with multiple space-delimited tags. The captured links must belong to all tags in the list.
 - `$any(tag1 tag2 tag3)` - Form a group with multiple space-delimited tags where the captured links must belong to at least one of the tags in the list.
-- `$named(title tag)` - Create a group with a title. Accepts a title and a tag seperated by a space. If you want to include a space in the title, you can escape the space with a backslash.
+- `$named(title tag)` - Create a group with a title. Accepts a title and a tag separated by a space. If you want to include a space in the title, you can escape the space with a backslash.
 - `$ungrouped` - A reference to the ungrouped links, you can use this to create a named grouped with them or choose what order they appear in.
 
 Grouping operators can also be freely nested within each other, for example: `$named(1\ to\ 3 $any(tag1 tag2 tag3))` would produce a named group "1 to 3", than contains all bookmarks with any of the tags `tag1`, `tag2`, `tag3`.

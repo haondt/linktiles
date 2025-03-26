@@ -1,0 +1,21 @@
+tasks:
+  - type: docker-build
+    image: linktiles
+    auto:
+      - source: push
+        has_tag: true
+        tag_source: tag
+      - source: push
+        has_tag: true
+        tag_source: latest
+    context: .
+    file: Dockerfile
+    registries:
+      - gitlab
+      - docker-hub
+    labels:
+      source: https://gitlab.com/haondt/linktiles
+      documentation: https://docs.haondt.dev/linktiles/
+      url: https://docs.haondt.dev/linktiles/
+      title: linktiles
+      image.base.name: docker.io/library/python:3.13.2-alpine
