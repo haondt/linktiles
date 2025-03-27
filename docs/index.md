@@ -39,7 +39,7 @@ linktiles will also propogate the styling configuration to the Glance extension.
 </figure>
 <figure markdown="span">
   <img style="height:500px;" src="./assets/glance_2.png"/>
-  <figcaption>Ghost fill</figcaption>
+  <figcaption>Grid layout</figcaption>
 </figure>
 
 
