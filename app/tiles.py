@@ -5,7 +5,7 @@ import json
 
 from . import linkding
 from .grouper_transformer import create_grouper
-from .models import LinkTilesConfigurationExport, LinkdingApiConnectionData, LinkdingBookmark, LinkdingOptions, LinkdingResponse, Tile, TileConfiguration, TileConfigurationList, TileGroup, TilesOptions, TimeUnit, UserData
+from .models import BookmarkSortOrder, LinkTilesConfigurationExport, LinkdingApiConnectionData, LinkdingBookmark, LinkdingOptions, LinkdingResponse, Tile, TileConfiguration, TileConfigurationList, TileGroup, TilesOptions, TimeUnit, UserData
 from .storage import storage
 
 def update_tiles_configuration(user_id: str, tiles: list[TileConfiguration]) -> None:
@@ -14,7 +14,7 @@ def update_tiles_configuration(user_id: str, tiles: list[TileConfiguration]) -> 
 def get_tiles_configuration(user_id: str) -> list[TileConfiguration]:
     return storage.get_tiles(user_id) or []
 
-def create_tile(user_id: str, prototype: TileConfiguration) -> Tile | str:
+def create_tile(user_id: str, prototype: TileConfiguration, tiles_options: TilesOptions) -> Tile | str:
     user_data = storage.get_user_data(user_id)
     if user_data is None:
         return "Error retrieving account information"
@@ -25,11 +25,12 @@ def create_tile(user_id: str, prototype: TileConfiguration) -> Tile | str:
     if isinstance(linkding_response, str):
         return linkding_response
 
-    return create_tile_from_linkding_response(user_id, prototype, linkding_response)
+    return create_tile_from_linkding_response(prototype, linkding_response, tiles_options)
 
 async def create_tiles_async(user_id: str) -> list[Tile] | str:
     user_data = storage.get_user_data(user_id)
     linkding_options = storage.get_linkding_options(user_id)
+    tiles_options = storage.get_tiles_options(user_id)
     if user_data is None:
         return "Error retrieving account information"
     if user_data.linkding is None:
@@ -49,7 +50,7 @@ async def create_tiles_async(user_id: str) -> list[Tile] | str:
     for i in range(len(prototypes)):
         linkding_response = results[i]
         assert isinstance(linkding_response, LinkdingResponse) # make the linter happy
-        tile = create_tile_from_linkding_response(user_id, prototypes[i], linkding_response)
+        tile = create_tile_from_linkding_response(prototypes[i], linkding_response, tiles_options)
         tiles.append(tile)
     return tiles
 
@@ -155,7 +156,7 @@ def _get_linkding_response(user_id: str, connection_data: LinkdingApiConnectionD
 
 
 
-def create_tile_from_linkding_response(user_id: str, prototype: TileConfiguration, linkding_response: LinkdingResponse) -> Tile | str:
+def create_tile_from_linkding_response(prototype: TileConfiguration, linkding_response: LinkdingResponse, tiles_options: TilesOptions) -> Tile | str:
     title: str | None = None
     if prototype.title is not None:
         title = prototype.title.strip()
@@ -186,6 +187,21 @@ def create_tile_from_linkding_response(user_id: str, prototype: TileConfiguratio
                 orphaned_links.append(link)
         if len(orphaned_links) > 0:
             groups.append(TileGroup(title=None, links=orphaned_links))
+    match tiles_options.bookmark_sort_order:
+        case BookmarkSortOrder.DEFAULT:
+            pass
+        case BookmarkSortOrder.ALPHABETICAL:
+            for group in groups:
+                group.links = sorted(group.links, key=lambda l: l.name)
+        case BookmarkSortOrder.ADDED:
+            for group in groups:
+                group.links = sorted(group.links, key=lambda l: l.date_added, reverse=True)
+        case BookmarkSortOrder.FIRST_ADDED:
+            for group in groups:
+                group.links = sorted(group.links, key=lambda l: l.date_added)
+        case BookmarkSortOrder.MODIFIED:
+            for group in groups:
+                group.links = sorted(group.links, key=lambda l: l.date_modified, reverse=True)
 
     return Tile(
         title=title,

@@ -4,6 +4,7 @@ from flask_login import UserMixin
 from lark import UnexpectedCharacters, UnexpectedToken
 from pydantic import BaseModel, Field, RootModel, field_validator
 from .pretty_print_transformer import pretty_print
+from datetime import datetime
 
 class User(UserMixin):
     def __init__(self, id):
@@ -62,9 +63,15 @@ class LinkdingBookmark(BaseModel):
     title: str
     url: str
     tag_names: list[str]
+    date_added: str = Field(default_factory=lambda: datetime.now().isoformat())
+    date_modified: str = Field(default_factory=lambda: datetime.now().isoformat())
 
     def as_link(self):
-        return Link(name=self.title.strip(), location=self.url)
+        return Link(
+                name=self.title.strip(),
+                location=self.url,
+                date_added=self.date_added,
+                date_modified=self.date_modified)
 
 class LinkdingResponse(BaseModel):
     results: list[LinkdingBookmark]
@@ -102,6 +109,13 @@ class TileGroupLayout(str, Enum):
     LIST = "List"
     COLUMNS = "Columns"
 
+class BookmarkSortOrder(str, Enum):
+    DEFAULT = "Default"
+    ALPHABETICAL = "Alphabetical"
+    MODIFIED = "Last Modified"
+    ADDED = "Last Added"
+    FIRST_ADDED = "First Added"
+
 class TilesOptions(BaseModel):
     colors: TileColors = TileColors.RANDOM
     fill: TileFill = TileFill.FILL
@@ -109,10 +123,13 @@ class TilesOptions(BaseModel):
     layout: TileLayout = TileLayout.MASONRY
     width: int = 300
     group_layout: TileGroupLayout = TileGroupLayout.DEFAULT
+    bookmark_sort_order: BookmarkSortOrder = BookmarkSortOrder.DEFAULT
 
 class Link(BaseModel):
     name: str
     location: str
+    date_added: str
+    date_modified: str
 
 class TileGroup(BaseModel):
     title: str | None

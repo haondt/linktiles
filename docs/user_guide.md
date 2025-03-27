@@ -108,6 +108,16 @@ How to arrange the bookmarks within a group.
 - List: a single vertical list
 - Columns: arrange the bookmarks in regular columns within the tile
 
+#### Bookmark sort
+
+How to order the bookmarks within a group.
+
+- Default: leave them ordered as they come from linkding
+- Alphabetical: alphabetical order
+- Last Modified: start with the most recently modified bookmark
+- Last Added: start with the most recently added bookmark
+- First Added: start with the least recently added bookmark
+
 ### linkding options
 
 #### Cache responses

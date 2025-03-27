@@ -2,7 +2,7 @@ from flask import Blueprint, Response, make_response, redirect, render_template,
 import random
 from pydantic import ValidationError
 
-from .models import TileColors, TileConfiguration, TileFill, TileGroupLayout, TileLayout, TileTitleLocation, TilesSettingsRequest, TimeUnit
+from .models import BookmarkSortOrder, TileColors, TileConfiguration, TileFill, TileGroupLayout, TileLayout, TileTitleLocation, TilesSettingsRequest, TimeUnit
 from .tiles import create_tile, create_tiles_async, export_tiles_configuration, get_linkding_options, get_tiles_configuration, get_tiles_options, update_linkding_options, update_tiles_configuration, update_tiles_options
 from .authentication import login_user, login_required, logout_user, login_manager, register_user, verify_password, current_user
 from .authentication import change_password as change_user_password
@@ -40,7 +40,8 @@ def add_routes(app):
         TileTitleLocation.__name__: TileTitleLocation,
         TileLayout.__name__: TileLayout,
         TileGroupLayout.__name__: TileGroupLayout,
-        TimeUnit.__name__: TimeUnit
+        TimeUnit.__name__: TimeUnit,
+        BookmarkSortOrder.__name__: BookmarkSortOrder
     }
 
     @bp.route('/', methods=['GET'])
@@ -148,10 +149,10 @@ def add_routes(app):
             limit=int(request.args.get('limit', 100)))
 
         user_id = current_user.get_id()
-        tile = create_tile(user_id, config)
+        tiles_options = get_tiles_options(user_id)
+        tile = create_tile(user_id, config, tiles_options)
         if isinstance(tile, str):
             return render_template("tile.html", error=tile)
-        tiles_options = get_tiles_options(user_id)
         return render_template("tile.html", tile=tile, options=tiles_options)
 
     @bp.route('settings', methods=['GET'])
@@ -200,6 +201,9 @@ def add_routes(app):
             tiles_options_dirty = True
         if 'tile_group_layout' in request.form:
             tiles_options.group_layout = TileGroupLayout(request.form['tile_group_layout'])
+            tiles_options_dirty = True
+        if 'bookmark_sort_order' in request.form:
+            tiles_options.bookmark_sort_order = BookmarkSortOrder(request.form['bookmark_sort_order'])
             tiles_options_dirty = True
 
         linkding_options_dirty = False

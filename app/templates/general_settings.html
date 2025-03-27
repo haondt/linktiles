@@ -133,6 +133,14 @@ end
     'How to lay out the groups within a tile.'
 ) }}
 
+{{ live_select(
+    'Bookmark Sort', 
+    'bookmark_sort_order',
+    types.BookmarkSortOrder | map(attribute='value'),
+    tiles_options.bookmark_sort_order.value,
+    'How to order the bookmarks within a group.'
+) }}
+
 
 <hr/>
 
