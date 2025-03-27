@@ -188,7 +188,7 @@
     outline: 1px solid hsl(var(--linktiles-tile-h), var(--linktiles-tile-s), var(--linktiles-tile-background-l));
 }
 .tile-body.is-ghost {
-    background-color: #14161a;
+    background-color: transparent;
 }
 .tile-body.is-dark.is-outlined {
     --linktiles-tile-background-l: 44%;
