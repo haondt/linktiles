@@ -148,7 +148,9 @@ pages:
       - size: full
         widgets:
           - type: extension
-            url: http://glance-linktiles-proxy/integrations/glance
+            url: http://linktiles:5001/integrations/glance
+            headers:
+              Authorization: "Bearer <your linktiles api key>"
             allow-potentially-dangerous-html: true
 ```
 
